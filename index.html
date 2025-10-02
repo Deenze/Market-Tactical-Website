@@ -7,32 +7,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d47a1; /* A deep, corporate blue */
-            --secondary-color: #5f6368; /* A neutral, readable grey for text */
-            --dark-bg: #ffffff; /* White background */
-            --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
-            --text-color-dark: #202124; /* The main dark text color */
-            --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
-            --accent-color: #1e88e5; /* A brighter blue for links and accents */
+            --primary-color: #0d47a1;
+            --secondary-color: #5f6368;
+            --dark-bg: #ffffff;
+            --light-bg: #f8f9fa;
+            --text-color-dark: #202124;
+            --text-color-light: #ffffff;
+            --accent-color: #1e88e5;
             --font-main: 'Roboto', sans-serif;
             --font-heading: 'Montserrat', sans-serif;
         }
+        html { scroll-behavior: smooth; }
         body { margin: 0; font-family: var(--font-main); color: var(--text-color-dark); background-color: var(--dark-bg); line-height: 1.6; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { background-color: var(--dark-bg); color: var(--text-color-dark); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
+        header { background-color: var(--dark-bg); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
         header .container { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-family: var(--font-heading); font-size: 1.8em; font-weight: 700; color: var(--primary-color); text-decoration: none; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
         nav ul li { margin-left: 30px; }
         nav ul li a { color: var(--text-color-dark); text-decoration: none; font-weight: 400; font-size: 1.05em; transition: color 0.3s ease; }
         nav ul li a:hover { color: var(--primary-color); }
-        .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://source.unsplash.com/1600x900/?stocks,finance') no-repeat center center/cover; height: 80vh; display: flex; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://source.unsplash.com/1600x900/?stocks,finance') no-repeat center center/cover; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .hero-content h1 { font-family: var(--font-heading); font-size: 3.5em; margin-bottom: 20px; color: var(--text-color-light); }
         .hero-content p { font-size: 1.4em; max-width: 800px; margin: 0 auto 40px auto; color: var(--text-color-light); }
-        .hero-buttons { display: flex; justify-content: center; gap: 20px; }
+        .hero-buttons { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; }
         .hero-btn { background-color: var(--primary-color); color: var(--text-color-light); padding: 15px 30px; text-decoration: none; font-family: var(--font-heading); font-weight: 700; border-radius: 5px; transition: background-color 0.3s ease, transform 0.3s ease; display: inline-block; }
         .hero-btn:hover { background-color: var(--accent-color); transform: translateY(-3px); }
         .hero-btn::after { content: ' →'; margin-left: 8px; }
+        .scroll-btn { margin-top: 40px; color: var(--text-color-light); font-size: 3em; text-decoration: none; opacity: 0.7; transition: opacity 0.3s, transform 0.3s; }
+        .scroll-btn:hover { opacity: 1; transform: translateY(5px); }
+        section { padding: 80px 0; }
+        .about-me { background-color: var(--light-bg); }
+        .about-content { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 800px; margin: 0 auto; }
+        .about-content h2 { font-family: var(--font-heading); font-size: 2.8em; text-align: center; margin-bottom: 60px; color: var(--primary-color); }
+        .about-content img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; margin-bottom: 30px; border: 5px solid var(--primary-color); box-shadow: 0 0 20px rgba(13, 71, 161, 0.2); }
+        .about-content p { font-size: 1.1em; margin-bottom: 20px; color: var(--text-color-dark); }
         footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
     </style>
 </head>
@@ -44,7 +53,7 @@
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="market.html">Market Outlook</a></li>
-                    <li><a href="portfolio.html">Portfolio & About</a></li>
+                    <li><a href="portfolio.html">Portfolio</a></li>
                 </ul>
             </nav>
         </div>
@@ -58,6 +67,24 @@
                     <a href="market.html" class="hero-btn">Market Outlook</a>
                     <a href="portfolio.html" class="hero-btn">Portfolio Metrics</a>
                 </div>
+            </div>
+            <a href="#about" class="scroll-btn">↓</a>
+        </section>
+        <section id="about" class="about-me">
+            <div class="about-content">
+                <h2>About Me</h2>
+                <img src="https://source.unsplash.com/200x200/?professional,headshot" alt="Your Professional Headshot">
+                <p>
+                    Hello! I'm Dani Nassar, a passionate financial analyst with a keen focus on quantitative strategies and market dynamics. 
+                    This platform serves as my digital portfolio, showcasing my research, tactical market outlooks, and
+                    performance metrics derived from a disciplined investment approach. I believe in transparent, data-driven decision-making 
+                    to uncover opportunities and manage risk effectively in today's complex financial landscape.
+                </p>
+                <p>
+                    My expertise lies in [mention your specific skills, e.g., equity valuation, options analysis, macroeconomic forecasting]. 
+                    I am dedicated to [your goal, e.g., continuous learning, generating alpha, providing actionable insights]. 
+                    Thank you for visiting, and I look forward to connecting.
+                </p>
             </div>
         </section>
     </main>
