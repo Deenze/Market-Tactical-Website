@@ -3,273 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Tactical | Financial Insights & Portfolio</title>
+    <title>Portfolio & About | Market Tactical</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-    --primary-color: #0d47a1; /* A deep, corporate blue */
-    --secondary-color: #5f6368; /* A neutral, readable grey for text */
-    --dark-bg: #ffffff; /* White background */
-    --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
-    --text-color-dark: #202124; /* The main dark text color */
-    --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
-    --accent-color: #1e88e5; /* A brighter blue for links and accents */
-    --font-main: 'Roboto', sans-serif;
-    --font-heading: 'Montserrat', sans-serif;
-}
-
-        /* Base Styles */
-        body {
-            margin: 0;
-            font-family: var(--font-main);
-            color: var(--text-color-dark);
-            background-color: var(--dark-bg);
-            line-height: 1.6;
-            scroll-behavior: smooth;
+        :root {
+            --primary-color: #0d47a1; /* A deep, corporate blue */
+            --secondary-color: #5f6368; /* A neutral, readable grey for text */
+            --dark-bg: #ffffff; /* White background */
+            --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
+            --text-color-dark: #202124; /* The main dark text color */
+            --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
+            --accent-color: #1e88e5; /* A brighter blue for links and accents */
+            --font-main: 'Roboto', sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header & Navigation */
-        header {
-            background-color: var(--dark-bg);
-            color: var(--text-color-dark);
-            padding: 20px 0;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-heading);
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        nav ul li {
-            margin-left: 30px;
-        }
-
-        nav ul li a {
-            color: var(--text-color-dark);
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 1.05em;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: var(--primary-color);
-        }
-      
-
-        /* Section Styling */
-        section {
-            padding: 80px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        section:last-of-type {
-            border-bottom: none;
-        }
-
-        section h2 {
-            font-family: var(--font-heading);
-            font-size: 2.8em;
-            text-align: center;
-            margin-bottom: 60px;
-            color: var(--primary-color);
-        }
-
-
-        /* Portfolio Metrics Section */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-
-        .metric-card {
-            background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .metric-card h3 {
-            font-family: var(--font-heading);
-            color: var(--text-color-dark);
-            font-size: 1.4em;
-            margin-bottom: 10px;
-        }
-
-        .metric-card .value {
-            font-family: var(--font-heading);
-            font-size: 2.5em;
-            font-weight: 700;
-            color: var(--accent-color); /* Green for positive */
-            margin-bottom: 10px;
-        }
-
-        .metric-card p {
-            font-size: 0.95em;
-            color: var(--secondary-color);
-        }
-
-        /* About Section */
-        .about-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .about-content img {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 30px;
-            border: 5px solid var(--primary-color);
-            box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
-        }
-
-        .about-content p {
-            font-size: 1.1em;
-            margin-bottom: 20px;
-            color: var(--text-color-dark);
-        }
-
-        /* Footer */
-        footer {
-            background-color: #111;
-            color: var(--secondary-color);
-            text-align: center;
-            padding: 40px 0;
-            font-size: 0.9em;
-            border-top: 1px solid #333;
-        }
-
-        footer .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        footer nav ul {
-            margin-top: 20px;
-        }
-
-        footer nav ul li a {
-            color: var(--secondary-color);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero {
-                height: 60vh;
-            }
-            .hero-content h1 {
-                font-size: 2.5em;
-            }
-            .hero-content p {
-                font-size: 1.1em;
-            }
-            nav ul {
-                flex-direction: column;
-                margin-top: 20px;
-            }
-            nav ul li {
-                margin: 10px 0;
-            }
-            section h2 {
-                font-size: 2em;
-            }
-            .metrics-grid, .market-outlook-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        body { margin: 0; font-family: var(--font-main); color: var(--text-color-dark); background-color: var(--dark-bg); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background-color: var(--dark-bg); color: var(--text-color-dark); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: var(--font-heading); font-size: 1.8em; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
+        nav ul li { margin-left: 30px; }
+        nav ul li a { color: var(--text-color-dark); text-decoration: none; font-weight: 400; font-size: 1.05em; transition: color 0.3s ease; }
+        nav ul li a:hover { color: var(--primary-color); }
+        section { padding: 80px 0; }
+        section:last-of-type { border-bottom: none; }
+        section h2 { font-family: var(--font-heading); font-size: 2.8em; text-align: center; margin-bottom: 60px; color: var(--primary-color); }
+        .update-date { text-align: center; color: var(--secondary-color); font-size: 1.1em; margin-top: -40px; margin-bottom: 40px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; }
+        .metric-card { background-color: var(--light-bg); border: 1px solid #e0e0e0; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .metric-card h3 { font-family: var(--font-heading); color: var(--text-color-dark); font-size: 1.4em; margin-bottom: 10px; }
+        .metric-card .value { font-family: var(--font-heading); font-size: 2.5em; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
+        .metric-card p { font-size: 0.95em; color: var(--secondary-color); }
+        .about-me { background-color: var(--light-bg); }
+        .about-content { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 800px; margin: 0 auto; }
+        .about-content img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; margin-bottom: 30px; border: 5px solid var(--primary-color); box-shadow: 0 0 20px rgba(13, 71, 161, 0.2); }
+        .about-content p { font-size: 1.1em; margin-bottom: 20px; color: var(--text-color-dark); }
+        footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <a href="#" class="logo">MARKET TACTICAL</a>
+            <a href="index.html" class="logo">MARKET TACTICAL</a>
             <nav>
                 <ul>
-                    <li><a href="#outlook">Market Outlook</a></li>
-                    <li><a href="#metrics">Portfolio Metrics</a></li>
-                    <li><a href="#about">About Me</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="market-updates.html">Market Updates</a></li>
+                    <li><a href="portfolio.html">Portfolio & About</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-
     <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Strategic Insights for Smarter Investing</h1>
-                <p>Navigating the markets with data-driven analysis and tactical execution. Your edge in a dynamic financial world.</p>
-            </div>
-        </section>
-
-        <section id="outlook" class="market-outlook">
-            <div class="container">
-                <h2>Latest Market Outlook</h2>
-                <div class="market-outlook-grid">
-                    <div class="outlook-post">
-                        <h3>Navigating Q2 2025: Key Trends & Opportunities</h3>
-                        <p>An in-depth analysis of current economic indicators, sector rotations, and potential market movers for the upcoming quarter. We explore inflation outlooks and central bank policies.</p>
-                        <span class="date">April 22, 2025</span>
-                    </div>
-                    <div class="outlook-post">
-                        <h3>The Tech Sector Rebound: Is It Sustainable?</h3>
-                        <p>Examining the factors driving recent tech stock performance, assessing valuation risks, and identifying sub-sectors poised for continued growth or potential correction.</p>
-                        <span class="date">April 15, 2025</span>
-                    </div>
-                    <div class="outlook-post">
-                        <h3>Commodities Corner: Gold, Oil, and Geopolitical Factors</h3>
-                        <p>A look at the global commodity markets, how geopolitical tensions are impacting supply chains, and what to expect from precious metals and energy prices.</p>
-                        <span class="date">April 08, 2025</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="metrics" class="portfolio-metrics">
             <div class="container">
                 <h2>Portfolio Performance Metrics</h2>
-                <p class="update-date">Updated as of October 1, 2025</p> <div class="metrics-grid">
+                <p class="update-date">Updated as of October 2, 2025</p>
                 <div class="metrics-grid">
                     <div class="metric-card">
                         <h3>Sharpe Ratio (YTD)</h3>
@@ -294,7 +84,6 @@
                 </div>
             </div>
         </section>
-
         <section id="about" class="about-me">
             <div class="container">
                 <h2>About Me</h2>
@@ -315,14 +104,10 @@
             </div>
         </section>
     </main>
-
     <footer>
         <div class="container">
             <p>&copy; 2025 Market Tactical. All rights reserved.</p>
         </div>
     </footer>
 </body>
-
 </html>
-
-
