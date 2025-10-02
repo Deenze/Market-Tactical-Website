@@ -6,7 +6,7 @@
     <title>Market Tactical | Financial Insights & Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+      :root {
     --primary-color: #0d47a1; /* A deep, corporate blue */
     --secondary-color: #5f6368; /* A neutral, readable grey for text */
     --dark-bg: #ffffff; /* White background */
@@ -132,37 +132,38 @@
             gap: 40px;
         }
 
-        .outlook-post {
-            background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+.outlook-post {
+    background-color: #ffffff; /* White background for each card */
+    border: 1px solid #e0e0e0;   /* Subtle border like Schwab */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+    padding: 30px;
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .outlook-post:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
+.outlook-post:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
 
-        .outlook-post h3 {
-            font-family: var(--font-heading);
-            color: var(--primary-color);
-            font-size: 1.5em;
-            margin-bottom: 15px;
-        }
+.outlook-post h3 {
+    color: var(--primary-color); /* Deep blue for titles */
+    font-size: 1.6em;
+    margin-bottom: 15px;
+}
 
-        .outlook-post p {
-            font-size: 1em;
-            color: var(--text-color-dark);
-        }
+.outlook-post p {
+    color: var(--secondary-color); /* Neutral grey for descriptions */
+    font-size: 1em;
+}
 
-        .outlook-post .date {
-            font-size: 0.9em;
-            color: var(--secondary-color);
-            margin-top: 10px;
-            display: block;
-        }
+.outlook-post .date {
+    color: var(--secondary-color); /* Grey for dates */
+    font-size: 0.9em;
+    margin-top: 20px;
+    display: block;
+}
 
         /* Portfolio Metrics Section */
         .metrics-grid {
@@ -386,4 +387,5 @@
 </body>
 
 </html>
+
 
