@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Market Tactical | Financial Insights & Portfolio</title>
-    <link rel="icon" type="image/png" href="Favicon123.png">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -29,7 +28,11 @@
         nav ul li a:hover { color: var(--primary-color); }
         .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://source.unsplash.com/1600x900/?stocks,finance') no-repeat center center/cover; height: 80vh; display: flex; justify-content: center; align-items: center; text-align: center; padding: 20px; }
         .hero-content h1 { font-family: var(--font-heading); font-size: 3.5em; margin-bottom: 20px; color: var(--text-color-light); }
-        .hero-content p { font-size: 1.4em; max-width: 800px; margin: 0 auto; color: var(--text-color-light); }
+        .hero-content p { font-size: 1.4em; max-width: 800px; margin: 0 auto 40px auto; color: var(--text-color-light); }
+        .hero-buttons { display: flex; justify-content: center; gap: 20px; }
+        .hero-btn { background-color: var(--primary-color); color: var(--text-color-light); padding: 15px 30px; text-decoration: none; font-family: var(--font-heading); font-weight: 700; border-radius: 5px; transition: background-color 0.3s ease, transform 0.3s ease; display: inline-block; }
+        .hero-btn:hover { background-color: var(--accent-color); transform: translateY(-3px); }
+        .hero-btn::after { content: ' →'; margin-left: 8px; }
         footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
     </style>
 </head>
@@ -50,7 +53,11 @@
         <section class="hero">
             <div class="hero-content">
                 <h1>Strategic Insights for Smarter Investing</h1>
-                <p>Actionable market outlooks backed by real-world performance. Follow my journey of tactical investing and data-driven returns</p>
+                <p>Actionable market outlooks backed by real-world performance. Follow my journey of tactical investing and data-driven returns.</p>
+                <div class="hero-buttons">
+                    <a href="market.html" class="hero-btn">Market Outlook</a>
+                    <a href="portfolio.html" class="hero-btn">Portfolio Metrics</a>
+                </div>
             </div>
         </section>
     </main>
@@ -61,10 +68,3 @@
     </footer>
 </body>
 </html>
-
-
-
-
-
-
-
