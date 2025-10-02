@@ -3,218 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Tactical | Financial Insights & Portfolio</title>
+    <title>Market Updates | Market Tactical</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-    --primary-color: #0d47a1; /* A deep, corporate blue */
-    --secondary-color: #5f6368; /* A neutral, readable grey for text */
-    --dark-bg: #ffffff; /* White background */
-    --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
-    --text-color-dark: #202124; /* The main dark text color */
-    --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
-    --accent-color: #1e88e5; /* A brighter blue for links and accents */
-    --font-main: 'Roboto', sans-serif;
-    --font-heading: 'Montserrat', sans-serif;
-}
-
-        /* Base Styles */
-        body {
-            margin: 0;
-            font-family: var(--font-main);
-            color: var(--text-color-dark);
-            background-color: var(--dark-bg);
-            line-height: 1.6;
-            scroll-behavior: smooth;
+        :root {
+            --primary-color: #0d47a1; /* A deep, corporate blue */
+            --secondary-color: #5f6368; /* A neutral, readable grey for text */
+            --dark-bg: #ffffff; /* White background */
+            --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
+            --text-color-dark: #202124; /* The main dark text color */
+            --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
+            --accent-color: #1e88e5; /* A brighter blue for links and accents */
+            --font-main: 'Roboto', sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header & Navigation */
-        header {
-            background-color: var(--dark-bg);
-            color: var(--text-color-dark);
-            padding: 20px 0;
-            border-bottom: 1px solid #333;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-heading);
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        nav ul li {
-            margin-left: 30px;
-        }
-
-        nav ul li a {
-            color: var(--text-color-dark);
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 1.05em;
-            transition: color 0.3s ease;
-        }
-
-        nav ul li a:hover {
-            color: var(--primary-color);
-        }
-
-
-        /* Section Styling */
-        section {
-            padding: 80px 0;
-            border-bottom: 1px solid #333;
-        }
-
-        section:last-of-type {
-            border-bottom: none;
-        }
-
-        section h2 {
-            font-family: var(--font-heading);
-            font-size: 2.8em;
-            text-align: center;
-            margin-bottom: 60px;
-            color: var(--primary-color);
-        }
-
-        /* Market Outlook Section */
-        .market-outlook-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-
-.outlook-post {
-    background-color: #ffffff; /* White background for each card */
-    border: 1px solid #e0e0e0;   /* Subtle border like Schwab */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
-    padding: 30px;
-    text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.outlook-post:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-.outlook-post h3 {
-    color: var(--primary-color); /* Deep blue for titles */
-    font-size: 1.6em;
-    margin-bottom: 15px;
-}
-
-.outlook-post p {
-    color: var(--secondary-color); /* Neutral grey for descriptions */
-    font-size: 1em;
-}
-
-.outlook-post .date {
-    color: var(--secondary-color); /* Grey for dates */
-    font-size: 0.9em;
-    margin-top: 20px;
-    display: block;
-}
-      
-        /* Footer */
-        footer {
-            background-color: #111;
-            color: var(--secondary-color);
-            text-align: center;
-            padding: 40px 0;
-            font-size: 0.9em;
-            border-top: 1px solid #333;
-        }
-
-        footer .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        footer nav ul {
-            margin-top: 20px;
-        }
-
-        footer nav ul li a {
-            color: var(--secondary-color);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero {
-                height: 60vh;
-            }
-            .hero-content h1 {
-                font-size: 2.5em;
-            }
-            .hero-content p {
-                font-size: 1.1em;
-            }
-            nav ul {
-                flex-direction: column;
-                margin-top: 20px;
-            }
-            nav ul li {
-                margin: 10px 0;
-            }
-            section h2 {
-                font-size: 2em;
-            }
-            .metrics-grid, .market-outlook-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        body { margin: 0; font-family: var(--font-main); color: var(--text-color-dark); background-color: var(--dark-bg); line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background-color: var(--dark-bg); color: var(--text-color-dark); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: var(--font-heading); font-size: 1.8em; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
+        nav ul li { margin-left: 30px; }
+        nav ul li a { color: var(--text-color-dark); text-decoration: none; font-weight: 400; font-size: 1.05em; transition: color 0.3s ease; }
+        nav ul li a:hover { color: var(--primary-color); }
+        section { padding: 80px 0; }
+        section h2 { font-family: var(--font-heading); font-size: 2.8em; text-align: center; margin-bottom: 60px; color: var(--primary-color); }
+        .market-outlook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .outlook-post { background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); padding: 30px; text-align: left; transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .outlook-post:hover { transform: translateY(-8px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+        .outlook-post h3 { color: var(--primary-color); font-size: 1.6em; margin-bottom: 15px; }
+        .outlook-post p { color: var(--secondary-color); font-size: 1em; }
+        .outlook-post .date { color: var(--secondary-color); font-size: 0.9em; margin-top: 20px; display: block; }
+        footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <a href="#" class="logo">MARKET TACTICAL</a>
+            <a href="index.html" class="logo">MARKET TACTICAL</a>
             <nav>
                 <ul>
-                    <li><a href="#outlook">Market Outlook</a></li>
-                    <li><a href="#metrics">Portfolio Metrics</a></li>
-                    <li><a href="#about">About Me</a></li>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="market-updates.html">Market Updates</a></li>
+                    <li><a href="portfolio.html">Portfolio & About</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-
     <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Strategic Insights for Smarter Investing</h1>
-                <p>Navigating the markets with data-driven analysis and tactical execution. Your edge in a dynamic financial world.</p>
-            </div>
-        </section>
-
         <section id="outlook" class="market-outlook">
             <div class="container">
                 <h2>Latest Market Outlook</h2>
@@ -237,64 +73,11 @@
                 </div>
             </div>
         </section>
-
-        <section id="metrics" class="portfolio-metrics">
-            <div class="container">
-                <h2>Portfolio Performance Metrics</h2>
-                <p class="update-date">Updated as of October 1, 2025</p> <div class="metrics-grid">
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <h3>Sharpe Ratio (YTD)</h3>
-                        <div class="value">1.25</div>
-                        <p>Measures risk-adjusted return. Higher is better.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Annualized Return</h3>
-                        <div class="value">18.7%</div>
-                        <p>Total return over the past 12 months, annualized.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Max Drawdown</h3>
-                        <div class="value">-8.2%</div>
-                        <p>Largest peak-to-trough decline in portfolio value.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Beta (vs. S&P 500)</h3>
-                        <div class="value">0.95</div>
-                        <p>Portfolio's volatility compared to the broader market index.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="about-me">
-            <div class="container">
-                <h2>About Me</h2>
-                <div class="about-content">
-                    <img src="https://source.unsplash.com/200x200/?professional,headshot" alt="Your Professional Headshot">
-                    <p>
-                        Hello! I'm Dani Nassar, a passionate financial analyst with a keen focus on quantitative strategies and market dynamics. 
-                        This platform serves as my digital portfolio, showcasing my research, tactical market outlooks, and
-                        performance metrics derived from a disciplined investment approach. I believe in transparent, data-driven decision-making 
-                        to uncover opportunities and manage risk effectively in today's complex financial landscape.
-                    </p>
-                    <p>
-                        My expertise lies in [mention your specific skills, e.g., equity valuation, options analysis, macroeconomic forecasting]. 
-                        I am dedicated to [your goal, e.g., continuous learning, generating alpha, providing actionable insights]. 
-                        Thank you for visiting, and I look forward to connecting.
-                    </p>
-                </div>
-            </div>
-        </section>
     </main>
-
     <footer>
         <div class="container">
             <p>&copy; 2025 Market Tactical. All rights reserved.</p>
         </div>
     </footer>
 </body>
-
 </html>
-
-
