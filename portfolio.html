@@ -36,13 +36,37 @@
         .metric-card .value { font-family: var(--font-heading); font-size: 2.5em; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
         .metric-card p { font-size: 0.95em; color: var(--secondary-color); }
         footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
+
+        /* Portfolio iframe styling */
+        #portfolio-sheet iframe,
+        #extra-portfolio iframe {
+            width: 100%;
+            max-width: 1200px;
+            height: 800px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        #extra-portfolio { display: none; margin-top: 30px; }
+        #extra-details-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-family: var(--font-heading);
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #extra-details-btn:hover { background-color: var(--accent-color); }
     </style>
 </head>
 <body>
     <header>
         <div class="container">
-            <a href="index.html" class="logo">
-            </a>
+            <a href="index.html" class="logo"></a>
             <nav>
                 <ul>
                     <li><a href="index.html">Home</a></li>
@@ -57,16 +81,17 @@
             <div class="container">
                 <h2>Portfolio Performance Metrics</h2>
                 <p class="update-date">Updated as of October 2, 2025</p>
-               <section id="portfolio-sheet" style="margin: 40px 0; text-align: center;">
-  <h2 style="margin-bottom: 20px;">Portfolio Performance Metrics</h2>
-  <div style="width: 100%; overflow: auto;">
-    <iframe 
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;widget=true&amp;headers=false" 
-        style="width:1200px; height:800px; border:1px solid #ddd; border-radius:8px;" 
-        scrolling="yes">
-    </iframe>
-  </div>
-</section>
+
+                <!-- Summary Sheet Embed -->
+                <section id="portfolio-sheet" style="margin: 40px 0; text-align: center;">
+                    <h3 style="margin-bottom: 20px;">Summary Metrics</h3>
+                    <div style="width: 100%; overflow: auto;">
+                        <iframe 
+                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;widget=true&amp;headers=false" 
+                            scrolling="yes">
+                        </iframe>
+                    </div>
+                </section>
 
                 <div class="metrics-grid">
                     <div class="metric-card">
@@ -90,6 +115,20 @@
                         <p>Portfolio's volatility compared to the broader market index.</p>
                     </div>
                 </div>
+
+                <!-- Extra Details Button -->
+                <button id="extra-details-btn">Extra Portfolio Details</button>
+
+                <!-- Detailed Sheet Embed (Hidden by default) -->
+                <div id="extra-portfolio">
+                    <h3>Detailed Portfolio vs SPY</h3>
+                    <div style="width: 100%; overflow: auto;">
+                        <iframe 
+                            src="<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"></iframe>" 
+                            scrolling="yes">
+                        </iframe>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -98,5 +137,15 @@
             <p>&copy; 2025 Market Tactical. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        document.getElementById('extra-details-btn').addEventListener('click', function() {
+            const extra = document.getElementById('extra-portfolio');
+            extra.style.display = (extra.style.display === 'none') ? 'block' : 'none';
+            if(extra.style.display === 'block') {
+                extra.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    </script>
 </body>
 </html>
