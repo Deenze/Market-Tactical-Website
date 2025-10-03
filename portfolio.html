@@ -30,37 +30,42 @@
         section { padding: 80px 0; }
         section h2 { font-family: var(--font-heading); font-size: 2.8em; text-align: center; margin-bottom: 60px; color: var(--primary-color); }
         .update-date { text-align: center; color: var(--secondary-color); font-size: 1.1em; margin-top: -40px; margin-bottom: 40px; }
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: center; }
-        .metric-card { background-color: var(--light-bg); border: 1px solid #e0e0e0; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
-        .metric-card h3 { font-family: var(--font-heading); color: var(--text-color-dark); font-size: 1.4em; margin-bottom: 10px; }
-        .metric-card .value { font-family: var(--font-heading); font-size: 2.5em; font-weight: 700; color: var(--primary-color); margin-bottom: 10px; }
-        .metric-card p { font-size: 0.95em; color: var(--secondary-color); }
+
+        /* Metrics grid moved to top */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; text-align: center; margin-bottom: 30px; }
+        .metric-card { background-color: var(--light-bg); border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+        .metric-card h3 { font-family: var(--font-heading); color: var(--text-color-dark); font-size: 1.05em; margin-bottom: 8px; }
+        .metric-card .value { font-family: var(--font-heading); font-size: 1.6em; font-weight: 700; color: var(--primary-color); margin-bottom: 6px; }
+        .metric-card p { font-size: 0.9em; color: var(--secondary-color); }
+
         footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
 
         /* Portfolio iframe styling */
-        #portfolio-sheet iframe,
-        #extra-portfolio iframe {
-            width: 100%;
-            max-width: 1200px;
-            height: 800px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
+        .sheet-wrap { width: 100%; overflow: auto; display:flex; justify-content:center; }
+        .sheet-wrap iframe { width: 1200px; max-width: 100%; height: 760px; border: 1px solid #ddd; border-radius: 8px; }
+
         #extra-portfolio { display: none; margin-top: 30px; }
         #extra-details-btn {
-            display: block;
-            margin: 30px auto;
-            padding: 12px 30px;
-            font-size: 1.1em;
+            display: inline-block;
+            margin: 20px auto 10px auto;
+            padding: 10px 20px;
+            font-size: 1em;
             font-family: var(--font-heading);
             background-color: var(--primary-color);
             color: #fff;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.2s ease;
         }
         #extra-details-btn:hover { background-color: var(--accent-color); }
+
+        /* small screens tweaks */
+        @media (max-width: 600px) {
+            section h2 { font-size: 1.8em; margin-bottom: 30px; }
+            .sheet-wrap iframe { height: 600px; }
+            .metric-card .value { font-size: 1.25em; }
+        }
     </style>
 </head>
 <body>
@@ -76,62 +81,82 @@
             </nav>
         </div>
     </header>
+
     <main>
         <section id="metrics" class="portfolio-metrics">
             <div class="container">
-                <h2>Portfolio Performance Metrics</h2>
+                <h2>Portfolio Performance</h2>
                 <p class="update-date">Updated as of October 2, 2025</p>
 
-                <!-- Summary Sheet Embed -->
-                <section id="portfolio-sheet" style="margin: 40px 0; text-align: center;">
-                    <h3 style="margin-bottom: 20px;">Summary Metrics</h3>
-                    <div style="width: 100%; overflow: auto;">
-                        <iframe 
-                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;widget=true&amp;headers=false" 
-                            scrolling="yes">
-                        </iframe>
-                    </div>
-                </section>
-
+                <!-- METRICS GRID (moved to top). 6 slots -->
                 <div class="metrics-grid">
                     <div class="metric-card">
-                        <h3>Sharpe Ratio (YTD)</h3>
+                        <h3>CAGR</h3>
+                        <div class="value">51.7%</div>
+                        <p>Geometric annualized return (YTD)</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Sharpe (YTD)</h3>
                         <div class="value">1.25</div>
-                        <p>Measures risk-adjusted return. Higher is better.</p>
+                        <p>Risk-adjusted return</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Sortino</h3>
+                        <div class="value">3.30</div>
+                        <p>Downside-adjusted risk</p>
                     </div>
                     <div class="metric-card">
                         <h3>Annualized Return</h3>
-                        <div class="value">18.7%</div>
-                        <p>Total return over the past 12 months, annualized.</p>
+                        <div class="value">48.7%</div>
+                        <p>Average monthly annualized</p>
                     </div>
                     <div class="metric-card">
                         <h3>Max Drawdown</h3>
                         <div class="value">-8.2%</div>
-                        <p>Largest peak-to-trough decline in portfolio value.</p>
+                        <p>Largest peak-to-trough loss</p>
                     </div>
                     <div class="metric-card">
-                        <h3>Beta (vs. S&P 500)</h3>
+                        <h3>Beta (vs S&P)</h3>
                         <div class="value">0.95</div>
-                        <p>Portfolio's volatility compared to the broader market index.</p>
+                        <p>Market sensitivity</p>
                     </div>
                 </div>
 
-                <!-- Extra Details Button -->
-                <button id="extra-details-btn">Extra Portfolio Details</button>
+                <!-- SUMMARY SHEET EMBED -->
+                <!-- Replace SUMMARY_SHEET_LINK with the published "Metrics" tab embed link (pubhtml). -->
+                <section id="portfolio-sheet" style="margin: 20px 0; text-align: center;">
+                    <h3 style="margin-bottom: 12px;">Summary Metrics (from Google Sheet)</h3>
+                    <div class="sheet-wrap">
+                        <iframe id="summary-iframe"
+                            src="<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;single=true&amp;widget=true&amp;headers=false"></iframe>"
+                            scrolling="yes"
+                            title="Portfolio summary">
+                        </iframe>
+                    </div>
+                </section>
 
-                <!-- Detailed Sheet Embed (Hidden by default) -->
+                <!-- Extra Details Button -->
+                <div style="text-align:center;">
+                    <button id="extra-details-btn">Extra Portfolio Details</button>
+                </div>
+
+                <!-- DETAILED SHEET EMBED (hidden by default) -->
+                <!-- Replace DETAILED_SHEET_LINK_HERE with the published "All data" tab embed link (pubhtml). -->
                 <div id="extra-portfolio">
-                    <h3>Detailed Portfolio vs SPY</h3>
-                    <div style="width: 100%; overflow: auto;">
-                        <iframe 
-                            src="<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"></iframe>" 
-                            scrolling="yes">
+                    <h3 style="text-align:center;">Detailed Portfolio (Month-by-month) vs SPY</h3>
+                    <div class="sheet-wrap" style="margin-top:12px;">
+                        <iframe id="detailed-iframe"
+                            src="<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"></iframe>"
+                            scrolling="yes"
+                            title="Detailed portfolio">
                         </iframe>
                     </div>
                 </div>
+
             </div>
         </section>
     </main>
+
     <footer>
         <div class="container">
             <p>&copy; 2025 Market Tactical. All rights reserved.</p>
@@ -139,13 +164,49 @@
     </footer>
 
     <script>
-        document.getElementById('extra-details-btn').addEventListener('click', function() {
+        // Toggle extra details safely
+        (function(){
+            const btn = document.getElementById('extra-details-btn');
             const extra = document.getElementById('extra-portfolio');
-            extra.style.display = (extra.style.display === 'none') ? 'block' : 'none';
-            if(extra.style.display === 'block') {
-                extra.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
+            const summaryIframe = document.getElementById('summary-iframe');
+            const detailedIframe = document.getElementById('detailed-iframe');
+
+            if(!btn || !extra) return; // guard
+
+            btn.addEventListener('click', function() {
+                try {
+                    const isHidden = window.getComputedStyle(extra).display === 'none';
+                    extra.style.display = isHidden ? 'block' : 'none';
+
+                    // if detailed iframe src is still the placeholder, do not attempt to load
+                    if(isHidden && detailedIframe && detailedIframe.getAttribute('src') && detailedIframe.getAttribute('src').includes('DETAILED_SHEET_LINK_HERE')){
+                        alert('Detailed sheet link not set. Please replace DETAILED_SHEET_LINK_HERE with your published sheet link.');
+                        extra.style.display = 'none';
+                        return;
+                    }
+
+                    // scroll into view when opening
+                    if(isHidden) {
+                        setTimeout(()=> extra.scrollIntoView({ behavior: 'smooth' }), 120);
+                    }
+                } catch(e) {
+                    console.error('Error toggling extra portfolio details', e);
+                    alert('An error occurred while opening detailed portfolio. Check console for details.');
+                }
+            });
+        })();
     </script>
+
+    <!--
+        HOW TO GET THE CORRECT EMBED LINKS:
+        1. Open your Google Sheet.
+        2. File -> Share -> Publish to web.
+        3. In the dialog, pick the specific SHEET (tab) you want (e.g., "Metrics"), choose "Web page" and click Publish.
+        4. Copy the iframe code Google gives you and extract the URL in src=...
+        5. Paste that full URL into SUMMARY_SHEET_LINK_HERE.
+        6. Repeat for the "All data" tab and paste the URL into DETAILED_SHEET_LINK_HERE.
+
+        IMPORTANT: Use the full pubhtml URL (it usually looks like "https://docs.google.com/spreadsheets/d/e/.../pubhtml?gid=XXXX&single=true&widget=true&headers=false").
+    -->
 </body>
 </html>
