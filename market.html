@@ -1,110 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Market Updates</title>
-  <link rel="icon" type="image/png" href="Favicon123.png">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #0d47a1;
-      --secondary-color: #5f6368;
-      --light-bg: #f8f9fa;
-      --dark-bg: #ffffff;
-      --text-color-dark: #202124;
-      --font-main: 'Roboto', sans-serif;
-      --font-heading: 'Montserrat', sans-serif;
-    }
-    body { margin: 0; font-family: var(--font-main); color: var(--text-color-dark); background-color: var(--dark-bg); line-height: 1.6; }
-    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-    header { background-color: var(--dark-bg); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
-    header .container { display: flex; justify-content: space-between; align-items: center; }
-    nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
-    nav ul li { margin-left: 30px; }
-    nav ul li a { text-decoration: none; color: var(--text-color-dark); font-weight: 500; }
-    nav ul li a:hover { color: var(--primary-color); }
-    
-    section h2 { font-family: var(--font-heading); font-size: 2.2em; text-align: center; margin: 20px 0 40px; color: var(--primary-color); }
-    
-    .controls { text-align: center; margin-bottom: 20px; }
-    .controls button { padding: 8px 16px; border: none; border-radius: 6px; background: var(--primary-color); color: white; font-size: 0.95em; cursor: pointer; }
-    .controls button:hover { background: #08306b; }
-    
-    .feed { display: flex; flex-direction: column; gap: 20px; }
-    .post { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.2s ease; }
-    .post:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-    .post h3 { margin: 0 0 10px; font-size: 1.3em; color: var(--primary-color); }
-    .post p { margin: 0; font-size: 1em; color: var(--secondary-color); }
-    .post .date { font-size: 0.85em; color: #888; margin-top: 12px; }
-    
-    footer { background: #111; color: #aaa; text-align: center; padding: 30px 0; font-size: 0.9em; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Updates</title>
+    <link rel="icon" type="image/png" href="Favicon123.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #5f6368;
+            --dark-bg: #ffffff;
+            --light-bg: #f8f9fa;
+            --text-color-dark: #202124;
+            --text-color-light: #ffffff;
+            --accent-color: #1e88e5;
+            --font-main: 'Roboto', sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: var(--font-main);
+            color: var(--text-color-dark);
+            background-color: var(--dark-bg);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--dark-bg);
+            color: var(--text-color-dark);
+            padding: 20px 0;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: var(--text-color-dark);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1.05em;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        section h2 {
+            font-family: var(--font-heading);
+            font-size: 2.8em;
+            text-align: center;
+            margin-bottom: 60px;
+            color: var(--primary-color);
+        }
+
+        /* Investment Intro Section */
+        .investment-intro {
+            padding: 60px 0;
+            background-color: #f9fafc;
+        }
+
+        .investment-intro h2 {
+            text-align: center;
+            font-family: var(--font-heading);
+            font-size: 2.4em;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+        }
+
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .investment-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .investment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+
+        .investment-card h3 {
+            color: var(--accent-color);
+            font-size: 1.4em;
+            margin-bottom: 15px;
+        }
+
+        /* Market Outlook */
+        .market-outlook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .outlook-post {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .outlook-post:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .outlook-post h3 {
+            color: var(--primary-color);
+            font-size: 1.6em;
+            margin-bottom: 15px;
+        }
+
+        .outlook-post p {
+            color: var(--secondary-color);
+            font-size: 1em;
+        }
+
+        .outlook-post .date {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+            margin-top: 20px;
+            display: block;
+        }
+
+        footer {
+            background-color: #111;
+            color: var(--secondary-color);
+            text-align: center;
+            padding: 40px 0;
+            font-size: 0.9em;
+            border-top: 1px solid #333;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <a href="index.html" class="logo"></a>
-      <nav>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="market.html">Market Outlook</a></li>
-          <li><a href="portfolio.html">Portfolio Metrics</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <section id="outlook" class="market-outlook">
-      <div class="container">
-        <h2>Market Outlook Feed</h2>
-        
-        <!-- Sort Controls -->
-        <div class="controls">
-          <button onclick="toggleSort()">Sort by: <span id="sort-label">Newest</span></button>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo"></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="market.html">Market Outlook</a></li>
+                    <li><a href="portfolio.html">Portfolio Metrics</a></li>
+                </ul>
+            </nav>
         </div>
-        
-        <!-- Posts Feed -->
-        <div class="feed" id="feed">
-          <div class="post" data-date="2025-04-22T10:00">
-            <h3>Navigating Q2 2025: Key Trends & Opportunities</h3>
-            <p>An in-depth analysis of current economic indicators, sector rotations, and potential market movers for the upcoming quarter.</p>
-            <div class="date">April 22, 2025 – 10:00 AM</div>
-          </div>
-          <div class="post" data-date="2025-04-15T14:30">
-            <h3>The Tech Sector Rebound: Is It Sustainable?</h3>
-            <p>Examining the factors driving recent tech stock performance, assessing valuation risks, and identifying sub-sectors for growth.</p>
-            <div class="date">April 15, 2025 – 2:30 PM</div>
-          </div>
-          <div class="post" data-date="2025-04-08T09:00">
-            <h3>Commodities Corner: Gold, Oil, and Geopolitics</h3>
-            <p>A look at the global commodity markets, how geopolitical tensions are impacting supply chains, and expectations for metals and energy.</p>
-            <div class="date">April 08, 2025 – 9:00 AM</div>
-          </div>
+    </header>
+
+    <main>
+
+        <!-- Investment Thesis & Strategy Section -->
+        <section id="investment-intro" class="investment-intro">
+            <div class="container">
+                <h2>My Investment Approach</h2>
+                <div class="investment-grid">
+                    <div class="investment-card">
+                        <h3>Investment Thesis</h3>
+                        <p>
+                            My investment thesis focuses on identifying undervalued companies with strong fundamentals, 
+                            durable competitive advantages, and long-term growth potential. 
+                            I believe in balancing innovation-driven sectors such as technology with defensive sectors 
+                            to create resilience across market cycles.
+                        </p>
+                    </div>
+                    <div class="investment-card">
+                        <h3>Investment Strategy</h3>
+                        <p>
+                            My strategy combines fundamental analysis with disciplined risk management. 
+                            I utilize a mix of long-term equity positions, options strategies, and sector diversification. 
+                            Capital allocation is structured to balance growth opportunities with downside protection, 
+                            ensuring sustainable portfolio performance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Outlook Feed -->
+        <section id="outlook" class="market-outlook">
+            <div class="container">
+                <h2>Market Outlook</h2>
+                <div class="market-outlook-grid">
+                    <div class="outlook-post">
+                        <h3>Navigating Q2 2025: Key Trends & Opportunities</h3>
+                        <p>An in-depth analysis of current economic indicators, sector rotations, and potential market movers for the upcoming quarter. We explore inflation outlooks and central bank policies.</p>
+                        <span class="date">April 22, 2025</span>
+                    </div>
+                    <div class="outlook-post">
+                        <h3>The Tech Sector Rebound: Is It Sustainable?</h3>
+                        <p>Examining the factors driving recent tech stock performance, assessing valuation risks, and identifying sub-sectors poised for continued growth or potential correction.</p>
+                        <span class="date">April 15, 2025</span>
+                    </div>
+                    <div class="outlook-post">
+                        <h3>Commodities Corner: Gold, Oil, and Geopolitical Factors</h3>
+                        <p>A look at the global commodity markets, how geopolitical tensions are impacting supply chains, and what to expect from precious metals and energy prices.</p>
+                        <span class="date">April 08, 2025</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Market Tactical. All rights reserved.</p>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 Market Tactical. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <script>
-    function toggleSort() {
-      const feed = document.getElementById("feed");
-      const posts = Array.from(feed.children);
-      const label = document.getElementById("sort-label");
-
-      // Reverse order of posts
-      posts.reverse().forEach(post => feed.appendChild(post));
-
-      // Toggle label
-      label.textContent = (label.textContent === "Newest") ? "Oldest" : "Newest";
-    }
-  </script>
+    </footer>
 </body>
 </html>
