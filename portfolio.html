@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0d47a1; /* A deep, corporate blue */
-            --secondary-color: #5f6368; /* A neutral, readable grey for text */
-            --dark-bg: #ffffff; /* White background */
-            --light-bg: #f8f9fa; /* A very light grey for section backgrounds */
-            --text-color-dark: #202124; /* The main dark text color */
-            --text-color-light: #ffffff; /* White text, for use on dark backgrounds */
-            --accent-color: #1e88e5; /* A brighter blue for links and accents */
+            --primary-color: #0d47a1;
+            --secondary-color: #5f6368;
+            --dark-bg: #ffffff;
+            --light-bg: #f8f9fa;
+            --text-color-dark: #202124;
+            --text-color-light: #ffffff;
+            --accent-color: #1e88e5;
             --font-main: 'Roboto', sans-serif;
             --font-heading: 'Montserrat', sans-serif;
         }
@@ -22,7 +22,7 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         header { background-color: var(--dark-bg); color: var(--text-color-dark); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
         header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-family: var(--font-heading); font-size: 1.8em; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        .logo img { height: 40px; vertical-align: middle; }
         nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
         nav ul li { margin-left: 30px; }
         nav ul li a { color: var(--text-color-dark); text-decoration: none; font-weight: 400; font-size: 1.05em; transition: color 0.3s ease; }
@@ -42,7 +42,7 @@
     <header>
         <div class="container">
             <a href="index.html" class="logo">
-                <img src="Market tactical gemini logo.png" alt="Market Tactical Logo" style="height: 40px; vertical-align: middle;">
+                <img src="Market tactical gemini logo.png" alt="Market Tactical Logo">
             </a>
             <nav>
                 <ul>
