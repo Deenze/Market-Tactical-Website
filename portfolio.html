@@ -1,167 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Metrics</title>
+    <title>Portfolio Metrics — Market Tactical</title>
+    <meta name="description" content="A transparent, month-by-month portfolio track record benchmarked against the S&P 500 — CAGR, Sharpe, Sortino, alpha, and beta, computed from published source data.">
+    <meta property="og:title" content="Portfolio Metrics — Market Tactical">
+    <meta property="og:description" content="A transparent, month-by-month track record benchmarked against the S&P 500.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://markettactical.com/portfolio.html">
     <link rel="icon" type="image/png" href="Favicon123.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #0d47a1;
-            --secondary-color: #5f6368;
-            --dark-bg: #ffffff;
-            --light-bg: #f8f9fa;
-            --text-color-dark: #202124;
-            --text-color-light: #ffffff;
-            --accent-color: #1e88e5;
-            --font-main: 'Roboto', sans-serif;
-            --font-heading: 'Montserrat', sans-serif;
-        }
-        body { margin: 0; font-family: var(--font-main); color: var(--text-color-dark); background-color: var(--dark-bg); line-height: 1.6; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { background-color: var(--dark-bg); color: var(--text-color-dark); padding: 20px 0; border-bottom: 1px solid #e0e0e0; position: sticky; top: 0; z-index: 1000; }
-        header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo img { height: 40px; vertical-align: middle; }
-        nav ul { list-style: none; margin: 0; padding: 0; display: flex; }
-        nav ul li { margin-left: 30px; }
-        nav ul li a { color: var(--text-color-dark); text-decoration: none; font-weight: 400; font-size: 1.05em; transition: color 0.3s ease; }
-        nav ul li a:hover { color: var(--primary-color); }
-        section { padding: 80px 0; }
-        section h2 { font-family: var(--font-heading); font-size: 2.8em; text-align: center; margin-bottom: 60px; color: var(--primary-color); }
-        .update-date { text-align: center; color: var(--secondary-color); font-size: 1.1em; margin-top: -40px; margin-bottom: 40px; }
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; text-align: center; margin-bottom: 30px; }
-        .metric-card { background-color: var(--light-bg); border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
-        .metric-card h3 { font-family: var(--font-heading); color: var(--text-color-dark); font-size: 1.05em; margin-bottom: 8px; }
-        .metric-card .value { font-family: var(--font-heading); font-size: 1.6em; font-weight: 700; color: var(--primary-color); margin-bottom: 6px; }
-        .metric-card p { font-size: 0.9em; color: var(--secondary-color); }
-        footer { background-color: #111; color: var(--secondary-color); text-align: center; padding: 40px 0; font-size: 0.9em; border-top: 1px solid #333; }
-        .sheet-wrap { width: 100%; overflow: auto; display:flex; justify-content:center; }
-        .sheet-wrap iframe { width: 1200px; max-width: 100%; height: 760px; border: 1px solid #ddd; border-radius: 8px; }
-        #extra-portfolio { display: none; margin-top: 30px; }
-        #extra-details-btn { display: inline-block; margin: 20px auto 10px auto; padding: 10px 20px; font-size: 1em; font-family: var(--font-heading); background-color: var(--primary-color); color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: background-color 0.2s ease; }
-        #extra-details-btn:hover { background-color: var(--accent-color); }
-        @media (max-width: 600px) {
-            section h2 { font-size: 1.8em; margin-bottom: 30px; }
-            .sheet-wrap iframe { height: 600px; }
-            .metric-card .value { font-size: 1.25em; }
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('mt-theme');
+                if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <header>
+    <nav class="site-nav" aria-label="Main navigation">
         <div class="container">
-            <a href="index.html" class="logo"></a>
-            <nav>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="market.html">Market Outlook</a></li>
-                    <li><a href="portfolio.html">Portfolio Metrics</a></li>
-                </ul>
-            </nav>
+            <a href="index.html" class="brand" aria-label="Market Tactical home">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M3 20 L9 13 L13 16 L23 5" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 5 H23 V12" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>MARKET&nbsp;<span class="brand-accent">TACTICAL</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="market.html">Market Outlook</a></li>
+                <li><a href="portfolio.html" aria-current="page">Portfolio Metrics</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" type="button" aria-label="Toggle color theme">
+                    <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <button class="nav-burger" type="button" aria-label="Open menu" aria-expanded="false">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <main>
-        <section id="metrics" class="portfolio-metrics">
+        <header class="page-head">
             <div class="container">
-                <h2>Portfolio Performance</h2>
-                <p class="update-date">Updated as of February 28, 2026</p>
+                <div class="section-kicker">Track record</div>
+                <h1>Portfolio Performance</h1>
+                <p>Every number on this page is computed from my published source spreadsheet — including the losing months. Benchmark is the S&amp;P&nbsp;500.</p>
+                <span class="updated-pill"><span class="dot"></span><span id="updatedLabel">Updated through February 2026</span></span>
+            </div>
+        </header>
 
-                <div class="metrics-grid">
+        <section class="block">
+            <div class="container">
+                <div class="section-head reveal">
+                    <div class="section-kicker">Key metrics</div>
+                    <h2>Risk &amp; return at a glance</h2>
+                    <p>Ratios are calculated from average monthly returns, annualized.</p>
+                </div>
+
+                <div class="metrics-grid reveal">
                     <div class="metric-card">
                         <h3>CAGR</h3>
-                        <div class="value">40.3%</div>
-                        <p>Geometric annualized return</p>
+                        <div class="value" id="mCagr">40.3%</div>
+                        <p>Geometric annualized return of the portfolio.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sharpe Ratio</h3>
-                        <div class="value">1.14</div>
-                        <p>A higher Sharpe ratio indicates a more favorable risk-to-reward profile</p>
+                        <div class="value" id="mSharpe">1.14</div>
+                        <p>Return per unit of total risk — higher means a more favorable risk-to-reward profile.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sortino Ratio</h3>
-                        <div class="value">1.06</div>
-                        <p>A higher Sortino ratio indicates a better return for the amount of downside risk taken</p>
+                        <div class="value" id="mSortino">1.06</div>
+                        <p>Like Sharpe, but only penalizes downside volatility.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Information Ratio</h3>
-                        <div class="value">0.99</div>
-                        <p>A higher Information Ratio indicates better performance relative to tracking error</p>
+                        <div class="value" id="mInfo">0.99</div>
+                        <p>Excess return over the benchmark relative to tracking error.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Alpha (annualized)</h3>
-                        <div class="value">5.4%</div>
-                        <p>A stock with high alpha has outperformed a market benchmark, on a risk-relative basis</p>
+                        <div class="value" id="mAlpha">5.4%</div>
+                        <p>Outperformance versus the market on a risk-adjusted basis.</p>
                     </div>
                     <div class="metric-card">
-                        <h3>Beta (vs S&amp;P)</h3>
-                        <div class="value">2.42</div>
-                        <p>A stock with a high beta is considered riskier and more volatile than the overall market</p>
+                        <h3>Beta (vs S&amp;P 500)</h3>
+                        <div class="value" id="mBeta">2.42</div>
+                        <p>Sensitivity to market moves — above 1 means more volatile than the index.</p>
                     </div>
                 </div>
 
-                <section id="portfolio-sheet" style="margin: 20px 0; text-align: center;">
-                    <h3 style="margin-bottom: 12px;">Summary Metrics (from Google Sheet)</h3>
-                    <div class="sheet-wrap">
-                        <iframe id="summary-iframe"
-                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;single=true&amp;widget=true&amp;headers=false"
-                            scrolling="yes"
-                            style="width:100%; height:200px; border:1px solid #ddd; border-radius:8px;"
-                            title="Portfolio summary">
-                        </iframe>
+                <div class="chart-panel reveal">
+                    <div class="chart-head">
+                        <div>
+                            <h3>Growth of $10,000</h3>
+                            <p class="chart-sub">Hypothetical value of $10,000 invested at the start of the track record, portfolio vs S&amp;P&nbsp;500.</p>
+                        </div>
                     </div>
-                </section>
-
-                <div style="text-align:center;">
-                    <button id="extra-details-btn">Extra Portfolio Details</button>
-                </div>
-
-                <div id="extra-portfolio">
-                    <h3 style="text-align:center;">Detailed Portfolio (Month-by-month) vs SPY</h3>
-                    <div class="sheet-wrap" style="margin-top:12px;">
-                        <iframe id="detailed-iframe"
-                            src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"
-                            style="width:100%; height:450px; border:1px solid #ddd; border-radius:8px;"
-                            scrolling="yes">
-                        </iframe>
+                    <div class="chart-legend" role="list">
+                        <div class="legend-item" role="listitem">
+                            <span class="swatch portfolio"></span>
+                            <span class="name">Portfolio</span>
+                            <span class="val" id="growthPortVal">—</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="swatch benchmark"></span>
+                            <span class="name">S&amp;P 500</span>
+                            <span class="val" id="growthSpyVal">—</span>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="growthChart" role="img" aria-label="Line chart comparing the growth of ten thousand dollars invested in the portfolio versus the S and P 500. A full data table is available below."></canvas>
                     </div>
                 </div>
 
+                <div class="chart-panel reveal">
+                    <div class="chart-head">
+                        <div>
+                            <h3>Monthly returns</h3>
+                            <p class="chart-sub">Modified-Dietz portfolio return each month, side by side with the S&amp;P&nbsp;500.</p>
+                        </div>
+                    </div>
+                    <div class="chart-legend" role="list">
+                        <div class="legend-item" role="listitem">
+                            <span class="swatch portfolio"></span>
+                            <span class="name">Portfolio</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="swatch benchmark"></span>
+                            <span class="name">S&amp;P 500</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="name">Best month:</span>
+                            <span class="val" id="monthlyBestVal">—</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="name">Worst month:</span>
+                            <span class="val" id="monthlyWorstVal">—</span>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="monthlyChart" role="img" aria-label="Bar chart of monthly portfolio returns compared with the S and P 500. A full data table is available below."></canvas>
+                    </div>
+                </div>
+
+                <details class="data-details reveal">
+                    <summary>Monthly data table</summary>
+                    <div class="details-body">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Month</th>
+                                        <th scope="col">Portfolio</th>
+                                        <th scope="col">S&amp;P 500</th>
+                                        <th scope="col">Active return</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="monthlyTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="data-details reveal">
+                    <summary>Source spreadsheet (Google Sheets)</summary>
+                    <div class="details-body">
+                        <p style="color: var(--text-2); font-size: 0.9rem; margin-top: 0;">The raw published spreadsheet every figure on this page is computed from.</p>
+                        <div class="sheet-wrap" style="margin-bottom: 16px;">
+                            <iframe loading="lazy" title="Portfolio summary metrics"
+                                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;single=true&amp;widget=true&amp;headers=false"
+                                style="height: 200px;"></iframe>
+                        </div>
+                        <div class="sheet-wrap">
+                            <iframe loading="lazy" title="Detailed month-by-month portfolio vs SPY"
+                                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"
+                                style="height: 450px;"></iframe>
+                        </div>
+                    </div>
+                </details>
+
+                <p class="disclaimer">Performance figures are self-reported and based on Modified-Dietz returns of a personal portfolio. Past performance does not guarantee future results. Nothing on this site is investment advice.</p>
             </div>
         </section>
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 Market Tactical. All rights reserved.</p>
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="brand" aria-label="Market Tactical home">
+                        <svg width="22" height="22" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M3 20 L9 13 L13 16 L23 5" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 5 H23 V12" stroke="var(--brand)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>MARKET&nbsp;<span class="brand-accent">TACTICAL</span></span>
+                    </a>
+                    <p>Strategic insights and a transparent track record from an independent tactical investor.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Site</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="market.html">Market Outlook</a></li>
+                        <li><a href="portfolio.html">Portfolio Metrics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="https://www.linkedin.com/in/dani-theodore-nassar-83b0a086/" target="_blank" rel="noopener">LinkedIn</a></li>
+                        <li><a href="https://github.com/Deenze" target="_blank" rel="noopener">GitHub</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; <span data-year>2026</span> Market Tactical. All rights reserved.</span>
+                <span>For informational purposes only — not financial advice.</span>
+            </div>
         </div>
     </footer>
 
-    <script>
-        (function(){
-            const btn = document.getElementById('extra-details-btn');
-            const extra = document.getElementById('extra-portfolio');
-
-            if(!btn || !extra) return;
-
-            btn.addEventListener('click', function() {
-                try {
-                    const isHidden = window.getComputedStyle(extra).display === 'none';
-                    extra.style.display = isHidden ? 'block' : 'none';
-                    if(isHidden) {
-                        setTimeout(function(){ extra.scrollIntoView({ behavior: 'smooth' }); }, 120);
-                    }
-                } catch(e) {
-                    console.error('Error toggling extra portfolio details', e);
-                }
-            });
-        })();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/portfolio.js"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "32b7fb3a8f584608a8d260e473fa5f0d"}'></script>
     <!-- End Cloudflare Web Analytics -->
-
 </body>
 </html>
