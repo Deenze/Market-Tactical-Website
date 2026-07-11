@@ -740,6 +740,79 @@ table.data-table td.neg { color: var(--down); }
 }
 
 /* --------------------------------------------------------------------------
+   Live markets dashboard
+   -------------------------------------------------------------------------- */
+.ticker-strip {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-2);
+  min-height: 46px;
+}
+
+.markets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+
+@media (max-width: 900px) {
+  .markets-grid { grid-template-columns: 1fr; }
+}
+
+.widget-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget-panel .panel-head {
+  padding: 18px 22px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.widget-panel .panel-head h3 {
+  font-family: var(--font-head);
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.widget-panel .panel-head p {
+  font-size: 0.83rem;
+  color: var(--text-3);
+  margin: 3px 0 0;
+}
+
+.widget-panel .panel-body {
+  flex: 1;
+  min-height: 0;
+  padding: 6px;
+}
+
+.widget-panel .panel-body,
+.widget-panel .tradingview-widget-container,
+.widget-panel .tradingview-widget-container__widget {
+  height: 100%;
+}
+
+.widget-panel.h-tall { height: 560px; }
+.widget-panel.h-wide { height: 620px; }
+
+@media (max-width: 640px) {
+  .widget-panel.h-tall { height: 480px; }
+  .widget-panel.h-wide { height: 460px; }
+}
+
+.markets-credit {
+  margin-top: 18px;
+  font-size: 0.8rem;
+  color: var(--text-3);
+}
+
+.markets-credit a { color: var(--text-2); }
+
+/* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
 footer.site-footer {

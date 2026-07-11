@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market Outlook — Market Tactical</title>
-    <meta name="description" content="Regular market commentary from Market Tactical — macro trends, sector calls, and the investment approach behind them.">
-    <meta property="og:title" content="Market Outlook — Market Tactical">
-    <meta property="og:description" content="Regular market commentary — macro trends, sector calls, and the reasoning behind each view.">
+    <title>Live Markets — Market Tactical</title>
+    <meta name="description" content="A real-time market dashboard — live indices, commodities, crypto, an S&P 500 sector heatmap, and breaking market news.">
+    <meta property="og:title" content="Live Markets — Market Tactical">
+    <meta property="og:description" content="A real-time market dashboard — live indices, sector heatmap, and breaking market news.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://markettactical.com/market.html">
     <link rel="icon" type="image/png" href="Favicon123.png">
@@ -35,7 +35,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="market.html" aria-current="page">Market Outlook</a></li>
+                <li><a href="market.html" aria-current="page">Live Markets</a></li>
                 <li><a href="portfolio.html">Portfolio Metrics</a></li>
             </ul>
             <div class="nav-actions">
@@ -53,70 +53,42 @@
     <main>
         <header class="page-head">
             <div class="container">
-                <div class="section-kicker">Analysis &amp; commentary</div>
-                <h1>Market Outlook</h1>
-                <p>Where I think the market is heading and why — macro trends, sector views, and the approach that drives every position I take.</p>
+                <div class="section-kicker">Real-time data</div>
+                <h1>Live Markets</h1>
+                <p>A real-time view of the markets I trade — indices, commodities, crypto, sector performance, and the stories moving them. This page updates itself, around the clock.</p>
             </div>
         </header>
 
+        <div class="ticker-strip" id="twTickerTape" aria-label="Live price ticker"></div>
+
         <section class="block">
             <div class="container">
-                <div class="section-head reveal">
-                    <div class="section-kicker">How I invest</div>
-                    <h2>My investment approach</h2>
-                </div>
-                <div class="card-grid">
-                    <div class="card reveal">
-                        <div class="card-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div class="markets-grid">
+                    <div class="widget-panel h-tall reveal">
+                        <div class="panel-head">
+                            <h3>Market overview</h3>
+                            <p>Indices, commodities, crypto, bonds &amp; FX — live quotes with 3-month mini charts.</p>
                         </div>
-                        <h3>Investment Thesis</h3>
-                        <p>My investment thesis focuses on analyzing companies with strong fundamentals, and recognizing competitive advantages like high margins and monopolies. I also apply technical analysis to figure out stock bottoms or entry points for swing trades.</p>
+                        <div class="panel-body" id="twOverview"></div>
                     </div>
-                    <div class="card reveal">
-                        <div class="card-icon">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <div class="widget-panel h-tall reveal">
+                        <div class="panel-head">
+                            <h3>Market news</h3>
+                            <p>Breaking stories across global stock markets, as they happen.</p>
                         </div>
-                        <h3>Investment Strategy</h3>
-                        <p>My strategy combines fundamental analysis and strict risk management. I utilize a mix of long-term stock or option holdings, and hedge with covered calls or VIX if warranted. Capital allocation is structured to balance growth opportunities with downside protection, ensuring sustainable portfolio performance.</p>
+                        <div class="panel-body" id="twNews"></div>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        <section id="outlook" class="block alt">
-            <div class="container">
-                <div class="section-head reveal">
-                    <div class="section-kicker">Latest views</div>
-                    <h2>Outlook posts</h2>
-                    <p>Newest first. Each post is a snapshot of my thinking at the time — judge them against what the market actually did.</p>
+                <div class="widget-panel h-wide reveal" style="margin-top: 22px;">
+                    <div class="panel-head">
+                        <h3>S&amp;P 500 heatmap</h3>
+                        <p>Today's winners and losers by sector, sized by market cap. Hover any tile for details.</p>
+                    </div>
+                    <div class="panel-body" id="twHeatmap"></div>
                 </div>
-                <div class="outlook-grid">
-                    <article class="post reveal">
-                        <div class="post-meta">
-                            <span class="tag">Macro</span>
-                            <span class="date">October 3, 2025</span>
-                        </div>
-                        <h3>Q3 2025, heading into 2026</h3>
-                        <p>I remain bullish on business profits, and rising stock prices. I look forward to analyzing market reactions to the government shutdown, but as of now, I remain bullish with positive sentiment throughout the market, with the VIX remaining steady. I expect an upwards move to compliment the ending of 2025 and the fed possibly decreasing rates, and the potential for a correction in the months following January 2026.</p>
-                    </article>
-                    <article class="post reveal">
-                        <div class="post-meta">
-                            <span class="tag">AI &amp; Tech</span>
-                            <span class="date">September 1, 2025</span>
-                        </div>
-                        <h3>AI bubble?</h3>
-                        <p>Examining the factors driving recent AI stock performance, it is logical to assume that we might be in a bubble. I personally believe in many beneficiaries of the AI rally — many businesses will stand to benefit, especially NVDA which I've been holding since 2021. The fact remains, the giants are not slowing their spending on chips, and companies like Micron, Nvidia, and Broadcom will keep seeing their shares skyrocket. As for the smaller cap &amp; no-revenue AI startups, they seem to be overblown and unreasonable. So are we in a bubble?</p>
-                    </article>
-                    <article class="post reveal">
-                        <div class="post-meta">
-                            <span class="tag">Commodities</span>
-                            <span class="date">July 20, 2025</span>
-                        </div>
-                        <h3>Gold prices</h3>
-                        <p>Taking a look at the global commodity markets, geopolitical tensions and tariffs are raising panic in the market and some investors are seeking safe havens. Although we are not seeing weakness in stocks, diversifying part of your portfolio into gold is a reasonable move. I am bullish on gold and expect it to continue rising in the coming months, but I would not offload any stocks just yet.</p>
-                    </article>
-                </div>
+
+                <p class="markets-credit">Live market data and news provided by <a href="https://www.tradingview.com/" target="_blank" rel="noopener">TradingView</a>. Quotes may be delayed depending on the exchange.</p>
             </div>
         </section>
     </main>
@@ -138,7 +110,7 @@
                     <h4>Site</h4>
                     <ul>
                         <li><a href="index.html">Home</a></li>
-                        <li><a href="market.html">Market Outlook</a></li>
+                        <li><a href="market.html">Live Markets</a></li>
                         <li><a href="portfolio.html">Portfolio Metrics</a></li>
                     </ul>
                 </div>
@@ -158,6 +130,7 @@
     </footer>
 
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/markets.js"></script>
 
     <!-- Cloudflare Web Analytics -->
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "32b7fb3a8f584608a8d260e473fa5f0d"}'></script>
