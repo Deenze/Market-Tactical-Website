@@ -212,6 +212,11 @@
   }
 
   MT.getData().then(function (d) {
+    if (!d) {
+      var el = document.getElementById('updatedLabel');
+      if (el) el.textContent = 'Performance data is temporarily unavailable';
+      return;
+    }
     fillUpdated(d);
     fillMetrics(d);
     fillLegends(d);

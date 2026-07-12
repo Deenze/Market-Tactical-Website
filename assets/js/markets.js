@@ -74,11 +74,11 @@
         {
           title: 'Commodities',
           symbols: [
-            { s: 'TVC:GOLD', d: 'Gold' },
-            { s: 'TVC:SILVER', d: 'Silver' },
-            { s: 'TVC:USOIL', d: 'Crude Oil' },
-            { s: 'NYMEX:NG1!', d: 'Natural Gas' },
-            { s: 'COMEX:HG1!', d: 'Copper' }
+            { s: 'OANDA:XAUUSD', d: 'Gold' },
+            { s: 'OANDA:XAGUSD', d: 'Silver' },
+            { s: 'OANDA:WTICOUSD', d: 'Crude Oil (WTI)' },
+            { s: 'OANDA:NATGASUSD', d: 'Natural Gas' },
+            { s: 'OANDA:XCUUSD', d: 'Copper' }
           ]
         },
         {
@@ -92,10 +92,11 @@
         {
           title: 'Bonds & FX',
           symbols: [
-            { s: 'TVC:US10Y', d: 'US 10Y Yield' },
-            { s: 'TVC:US02Y', d: 'US 2Y Yield' },
-            { s: 'TVC:DXY', d: 'Dollar Index' },
-            { s: 'FX_IDC:EURUSD', d: 'EUR/USD' }
+            { s: 'OANDA:USB10YUSD', d: 'US 10Y T-Note' },
+            { s: 'OANDA:USB02YUSD', d: 'US 2Y T-Note' },
+            { s: 'OANDA:EURUSD', d: 'EUR/USD' },
+            { s: 'OANDA:USDJPY', d: 'USD/JPY' },
+            { s: 'OANDA:GBPUSD', d: 'GBP/USD' }
           ]
         }
       ]

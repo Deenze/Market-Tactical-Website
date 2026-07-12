@@ -1,42 +1,19 @@
 /* Market Tactical — portfolio data layer.
-   Fetches live numbers from the published Google Sheet (CSV). If the fetch
-   fails (offline, Google hiccup), the embedded fallback below is used, so the
-   site never shows empty charts. Update the Google Sheet and the site follows. */
+   Source of truth is portfolio.json in the repository. While its
+   preferGoogleSheet flag is true, the published Google Sheet (CSV) is tried
+   first so the site tracks the sheet automatically, and portfolio.json is the
+   fallback; set the flag to false to serve portfolio.json exclusively. */
 
 window.MT = (function () {
   'use strict';
+
+  var PORTFOLIO_JSON = 'portfolio.json';
 
   var SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pub';
   var SUMMARY_CSV = SHEET_BASE + '?gid=422018548&single=true&output=csv';
   var DETAIL_CSV = SHEET_BASE + '?gid=1598303926&single=true&output=csv';
 
-  /* Snapshot of the sheet as of Feb 2026 — used only if the live fetch fails. */
-  var FALLBACK = {
-    summary: {
-      sharpe: 1.14,
-      information: 0.99,
-      sortino: 1.06,
-      beta: 2.42,
-      alphaAnnual: 5.4,
-      cagr: 40.3
-    },
-    monthly: [
-      { label: 'Jan 25', spy: 2.33, port: -8.25 },
-      { label: 'Feb 25', spy: -0.25, port: 4.04 },
-      { label: 'Mar 25', spy: -5.97, port: -16.08 },
-      { label: 'Apr 25', spy: -0.51, port: 5.16 },
-      { label: 'May 25', spy: 5.09, port: 20.35 },
-      { label: 'Jun 25', spy: 5.23, port: 12.56 },
-      { label: 'Jul 25', spy: 2.46, port: 3.43 },
-      { label: 'Aug 25', spy: 2.75, port: 5.0 },
-      { label: 'Sep 25', spy: 4.48, port: 10.31 },
-      { label: 'Oct 25', spy: 2.63, port: 5.98 },
-      { label: 'Nov 25', spy: -0.48, port: 0.3 },
-      { label: 'Dec 25', spy: 0.49, port: 3.31 },
-      { label: 'Jan 26', spy: 1.37, port: 2.46 },
-      { label: 'Feb 26', spy: -0.9, port: -3.5 }
-    ]
-  };
+  var GROWTH_START = 100000;
 
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   var MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
@@ -88,7 +65,7 @@ window.MT = (function () {
     return m + ' ' + (y.length === 2 ? y : y.slice(-2));
   }
 
-  function parseSummary(rows) {
+  function parseSheetSummary(rows) {
     if (rows.length < 2) return null;
     var v = rows[1];
     var s = {
@@ -103,7 +80,7 @@ window.MT = (function () {
     return s;
   }
 
-  function parseDetail(rows) {
+  function parseSheetDetail(rows) {
     var out = [];
     for (var i = 1; i < rows.length; i++) {
       var r = rows[i];
@@ -117,11 +94,46 @@ window.MT = (function () {
     return out.length ? out : null;
   }
 
+  /* portfolio.json -> internal shape */
+  function parseLocalSummary(json) {
+    if (!json || !json.summary) return null;
+    var s = json.summary;
+    var out = {
+      sharpe: num(s.sharpe),
+      information: num(s.informationRatio),
+      sortino: num(s.sortino),
+      beta: num(s.beta),
+      alphaAnnual: num(s.alphaAnnualized),
+      cagr: num(s.cagr)
+    };
+    for (var k in out) { if (isNaN(out[k])) return null; }
+    return out;
+  }
+
+  function parseLocalMonthly(json) {
+    if (!json || !Array.isArray(json.monthly)) return null;
+    var out = [];
+    json.monthly.forEach(function (m) {
+      var port = num(m.portfolio);
+      var spy = num(m.sp500);
+      if (!m.month || isNaN(port) || isNaN(spy)) return;
+      out.push({ label: monthLabel(m.month), port: port, spy: spy });
+    });
+    return out.length ? out : null;
+  }
+
   function fetchCsv(url) {
     return fetch(url, { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.text();
     }).then(parseCsv);
+  }
+
+  function fetchJson(url) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
   }
 
   /* Derived series ----------------------------------------------------- */
@@ -149,30 +161,45 @@ window.MT = (function () {
     return MONTHS_FULL[idx] + ' 20' + parts[1];
   }
 
+  function build(summary, monthly, source) {
+    return {
+      source: source, /* 'sheet' | 'json' */
+      live: source === 'sheet',
+      summary: summary,
+      monthly: monthly,
+      growth: growthSeries(monthly, GROWTH_START),
+      growthStart: GROWTH_START,
+      portCumulative: cumulativeReturn(monthly, 'port'),
+      spyCumulative: cumulativeReturn(monthly, 'spy'),
+      updatedLabel: lastUpdatedLabel(monthly),
+      sinceLabel: monthly[0].label
+    };
+  }
+
   var promise = null;
 
   function getData() {
     if (promise) return promise;
-    promise = Promise.all([
-      fetchCsv(SUMMARY_CSV).then(parseSummary).catch(function () { return null; }),
-      fetchCsv(DETAIL_CSV).then(parseDetail).catch(function () { return null; })
-    ]).then(function (res) {
-      var summary = res[0] || FALLBACK.summary;
-      var monthly = res[1] || FALLBACK.monthly;
-      var live = !!(res[0] && res[1]);
-      return {
-        live: live,
-        summary: summary,
-        monthly: monthly,
-        growth: growthSeries(monthly, 10000),
-        portCumulative: cumulativeReturn(monthly, 'port'),
-        spyCumulative: cumulativeReturn(monthly, 'spy'),
-        updatedLabel: lastUpdatedLabel(monthly),
-        sinceLabel: monthly[0].label
-      };
+    promise = fetchJson(PORTFOLIO_JSON).catch(function () { return null; }).then(function (json) {
+      var localSummary = parseLocalSummary(json);
+      var localMonthly = parseLocalMonthly(json);
+      var preferSheet = !json || json.preferGoogleSheet !== false;
+
+      if (!preferSheet && localSummary && localMonthly) {
+        return build(localSummary, localMonthly, 'json');
+      }
+
+      return Promise.all([
+        fetchCsv(SUMMARY_CSV).then(parseSheetSummary).catch(function () { return null; }),
+        fetchCsv(DETAIL_CSV).then(parseSheetDetail).catch(function () { return null; })
+      ]).then(function (res) {
+        if (res[0] && res[1]) return build(res[0], res[1], 'sheet');
+        if (localSummary && localMonthly) return build(localSummary, localMonthly, 'json');
+        return null; /* nothing available — pages keep their static fallbacks */
+      });
     });
     return promise;
   }
 
-  return { getData: getData, fallback: FALLBACK };
+  return { getData: getData };
 })();

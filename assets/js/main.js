@@ -195,6 +195,7 @@
   var heroStats = document.getElementById('heroStats');
   if (heroStats && window.MT) {
     MT.getData().then(function (d) {
+      if (!d) return; /* fetches failed — keep the static values in the HTML */
       var cumEl = document.getElementById('statCumulative');
       var spyEl = document.getElementById('statSpy');
       var cagrEl = document.getElementById('statCagr');
