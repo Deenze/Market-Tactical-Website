@@ -1,13 +1,13 @@
 {
-  "notes": "Monthly returns are in percent (e.g. -8.25 means -8.25%). The site reads this file for all portfolio metrics. While preferGoogleSheet is true, the published Google Sheet is tried first and this file is the fallback; set it to false to make this file the only source of truth.",
+  "notes": "Monthly returns are in percent (e.g. -8.25 means -8.25%). The site reads this file for all portfolio metrics. While preferGoogleSheet is true, the published Google Sheet is also fetched and whichever record reaches a later month is used (tie goes to the sheet); set it to false to make this file the only source of truth.",
   "preferGoogleSheet": true,
   "summary": {
-    "cagr": 41.5,
-    "sharpe": 1.15,
-    "sortino": 1.06,
-    "informationRatio": 0.92,
-    "alphaAnnualized": 6.9,
-    "beta": 1.91
+    "cagr": 51.6,
+    "sharpe": 1.41,
+    "sortino": 2.63,
+    "informationRatio": 1.26,
+    "alphaAnnualized": 15.1,
+    "beta": 1.86
   },
   "monthly": [
     { "month": "Jan 25", "portfolio": -8.25, "sp500": 2.33 },
@@ -27,6 +27,8 @@
     { "month": "Mar 26", "portfolio": -0.31, "sp500": -4.34 },
     { "month": "Apr 26", "portfolio": 19.28, "sp500": 9.95 },
     { "month": "May 26", "portfolio": 3.18, "sp500": 5.3 },
-    { "month": "Jun 26", "portfolio": -7.55, "sp500": -1.0 }
+    { "month": "Jun 26", "portfolio": -7.55, "sp500": -1.0 },
+    { "month": "Jul 26", "portfolio": 8.8, "sp500": -0.13 },
+    { "month": "Aug 26", "portfolio": 9.25, "sp500": 2.62 }
   ]
 }

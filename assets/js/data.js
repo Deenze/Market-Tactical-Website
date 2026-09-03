@@ -1,8 +1,9 @@
 /* Market Tactical — portfolio data layer.
    Source of truth is portfolio.json in the repository. While its
-   preferGoogleSheet flag is true, the published Google Sheet (CSV) is tried
-   first so the site tracks the sheet automatically, and portfolio.json is the
-   fallback; set the flag to false to serve portfolio.json exclusively. */
+   preferGoogleSheet flag is true, the published Google Sheet (CSV) is fetched
+   too and whichever record reaches a later month wins (tie goes to the sheet),
+   so updating either one moves the site forward; set the flag to false to
+   serve portfolio.json exclusively. */
 
 window.MT = (function () {
   'use strict';
@@ -153,6 +154,15 @@ window.MT = (function () {
     return (g - 1) * 100;
   }
 
+  /* "Aug 26" -> sortable integer (months since year 0); -1 if unparseable */
+  function monthIndex(label) {
+    var parts = String(label).split(' ');
+    var m = MONTHS.indexOf(parts[0]);
+    var y = parseInt(parts[1], 10);
+    if (m === -1 || isNaN(y)) return -1;
+    return (2000 + y) * 12 + m;
+  }
+
   function lastUpdatedLabel(monthly) {
     var last = monthly[monthly.length - 1].label; /* e.g. "Feb 26" */
     var parts = last.split(' ');
@@ -193,8 +203,17 @@ window.MT = (function () {
         fetchCsv(SUMMARY_CSV).then(parseSheetSummary).catch(function () { return null; }),
         fetchCsv(DETAIL_CSV).then(parseSheetDetail).catch(function () { return null; })
       ]).then(function (res) {
-        if (res[0] && res[1]) return build(res[0], res[1], 'sheet');
-        if (localSummary && localMonthly) return build(localSummary, localMonthly, 'json');
+        var sheetOk = !!(res[0] && res[1]);
+        var localOk = !!(localSummary && localMonthly);
+        if (sheetOk && localOk) {
+          var sheetLast = monthIndex(res[1][res[1].length - 1].label);
+          var localLast = monthIndex(localMonthly[localMonthly.length - 1].label);
+          return localLast > sheetLast
+            ? build(localSummary, localMonthly, 'json')
+            : build(res[0], res[1], 'sheet');
+        }
+        if (sheetOk) return build(res[0], res[1], 'sheet');
+        if (localOk) return build(localSummary, localMonthly, 'json');
         return null; /* nothing available — pages keep their static fallbacks */
       });
     });

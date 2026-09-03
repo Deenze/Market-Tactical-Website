@@ -11,7 +11,7 @@ Pure static HTML/CSS/JS (no build step) — deploys straight to GitHub Pages.
 - `portfolio.html` — interactive performance charts, risk metrics, monthly data table
 - `assets/css/style.css` — shared styles (dark theme default, light theme via toggle)
 - `portfolio.json` — the portfolio data file (summary metrics + monthly returns)
-- `assets/js/data.js` — loads portfolio.json; while its preferGoogleSheet flag is true, the published Google Sheet (CSV) is tried first and portfolio.json is the fallback
+- `assets/js/data.js` — loads portfolio.json; while its preferGoogleSheet flag is true, the published Google Sheet (CSV) is fetched too and whichever record reaches a later month is used
 - `assets/js/main.js` — nav, theme toggle, scroll reveal, hero animation, counters
 - `assets/js/portfolio.js` — Chart.js charts, metric cards, data table
 - `assets/js/markets.js` — TradingView widget embeds (ticker, overview, heatmap, news)
