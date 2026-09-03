@@ -1,4 +1,4 @@
-/* Market Tactical — portfolio page: metric cards, charts, data table */
+/* Market Tactical: portfolio page: metric cards, charts, data table */
 (function () {
   'use strict';
 
@@ -15,6 +15,7 @@
     return {
       portfolio: cssVar('--series-portfolio'),
       benchmark: cssVar('--series-benchmark'),
+      nasdaq: cssVar('--series-nasdaq'),
       down: cssVar('--down'),
       grid: cssVar('--grid-line'),
       ink: cssVar('--text-3'),
@@ -91,7 +92,9 @@
           { label: 'Portfolio', data: d.growth.port, borderColor: c.portfolio, backgroundColor: c.portfolio + '22',
             fill: true, borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.portfolio, tension: 0.25 },
           { label: 'S&P 500', data: d.growth.spy, borderColor: c.benchmark,
-            borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.benchmark, tension: 0.25 }
+            borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.benchmark, tension: 0.25 },
+          { label: 'Nasdaq 100 (QQQ)', data: d.growth.ndx, borderColor: c.nasdaq, spanGaps: false,
+            borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.nasdaq, tension: 0.25 }
         ]
       },
       options: baseOptions(c, '$')
@@ -101,6 +104,8 @@
       chart.data.datasets[0].borderColor = cc.portfolio;
       chart.data.datasets[0].backgroundColor = cc.portfolio + '22';
       chart.data.datasets[1].borderColor = cc.benchmark;
+      chart.data.datasets[2].borderColor = cc.nasdaq;
+      chart.data.datasets[2].pointHoverBackgroundColor = cc.nasdaq;
       chart.options = baseOptions(cc, '$');
       chart.update();
     });
@@ -164,6 +169,10 @@
     var sEnd = d.growth.spy[d.growth.spy.length - 1];
     setText('growthPortVal', '$' + Math.round(pEnd).toLocaleString('en-US') + ' (' + fmtPct(d.portCumulative, 1) + ')');
     setText('growthSpyVal', '$' + Math.round(sEnd).toLocaleString('en-US') + ' (' + fmtPct(d.spyCumulative, 1) + ')');
+    var nEnd = d.growth.ndx[d.growth.ndx.length - 1];
+    setText('growthNdxVal', d.growth.ndxAvailable && nEnd != null
+      ? '$' + Math.round(nEnd).toLocaleString('en-US') + ' (' + fmtPct(d.ndxCumulative, 1) + ')'
+      : 'n/a');
 
     var best = d.monthly.reduce(function (a, b) { return b.port > a.port ? b : a; });
     var worst = d.monthly.reduce(function (a, b) { return b.port < a.port ? b : a; });
@@ -201,6 +210,9 @@
       html += '<tr><td>' + m.label + '</td>' +
         '<td class="' + (m.port >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.port) + '</td>' +
         '<td class="' + (m.spy >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.spy) + '</td>' +
+        (isFinite(m.ndx)
+          ? '<td class="' + (m.ndx >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.ndx) + '</td>'
+          : '<td>n/a</td>') +
         '<td class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + fmtPct(diff) + '</td></tr>';
     });
     body.innerHTML = html;

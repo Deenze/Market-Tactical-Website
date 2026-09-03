@@ -1,4 +1,4 @@
-/* Market Tactical — live markets dashboard.
+/* Market Tactical: live markets dashboard.
    Renders TradingView's free embed widgets (no API key, self-updating).
    Widgets are re-rendered on theme change since each iframe bakes in a theme. */
 (function () {

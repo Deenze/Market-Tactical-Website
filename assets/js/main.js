@@ -1,4 +1,4 @@
-/* Market Tactical — shared UI behavior */
+/* Market Tactical: shared UI behavior */
 (function () {
   'use strict';
 
@@ -99,7 +99,7 @@
     function resize() {
       var rect = canvas.parentElement.getBoundingClientRect();
       if (!rect.width || !rect.height) {
-        /* layout not ready yet — try again next frame */
+        /* layout not ready yet: try again next frame */
         requestAnimationFrame(resize);
         return;
       }
@@ -195,7 +195,7 @@
   var heroStats = document.getElementById('heroStats');
   if (heroStats && window.MT) {
     MT.getData().then(function (d) {
-      if (!d) return; /* fetches failed — keep the static values in the HTML */
+      if (!d) return; /* fetches failed: keep the static values in the HTML */
       var cumEl = document.getElementById('statCumulative');
       var spyEl = document.getElementById('statSpy');
       var cagrEl = document.getElementById('statCagr');

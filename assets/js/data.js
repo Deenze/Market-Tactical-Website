@@ -1,4 +1,4 @@
-/* Market Tactical — portfolio data layer.
+/* Market Tactical: portfolio data layer.
 
    Monthly returns come from portfolio.json in this repository and/or the
    published Google Sheet (detail tab). When both load, whichever reaches a
@@ -56,7 +56,7 @@ window.MT = (function () {
     return parseFloat(String(s).replace(/[%,$\s]/g, ''));
   }
 
-  /* The sheet uses both "25-Jan" and "Jan-26" — handle either order. */
+  /* The sheet uses both "25-Jan" and "Jan-26": handle either order. */
   function monthLabel(raw) {
     var parts = String(raw).trim().split(/[-/ ]+/);
     if (parts.length !== 2) return String(raw);
@@ -85,19 +85,19 @@ window.MT = (function () {
       if (!r[0] || r.length < 4) continue;
       var spy = num(r[1]), rf = num(r[2]), port = num(r[3]);
       if (isNaN(spy) || isNaN(port)) continue;
-      out.push({ label: monthLabel(r[0]), port: port, spy: spy * 100, rf: isNaN(rf) ? 0 : rf * 100 });
+      out.push({ label: monthLabel(r[0]), port: port, spy: spy * 100, rf: isNaN(rf) ? 0 : rf * 100, ndx: NaN });
     }
     return out.length ? out : null;
   }
 
-  /* portfolio.json: { monthly: [{ month, portfolio, sp500, rf }] } — all in percent */
+  /* portfolio.json: { monthly: [{ month, portfolio, sp500, rf }] }: all in percent */
   function parseLocalMonthly(json) {
     if (!json || !Array.isArray(json.monthly)) return null;
     var out = [];
     json.monthly.forEach(function (m) {
-      var port = num(m.portfolio), spy = num(m.sp500), rf = num(m.rf);
+      var port = num(m.portfolio), spy = num(m.sp500), rf = num(m.rf), ndx = num(m.nasdaq100);
       if (!m.month || isNaN(port) || isNaN(spy)) return;
-      out.push({ label: monthLabel(m.month), port: port, spy: spy, rf: isNaN(rf) ? 0 : rf });
+      out.push({ label: monthLabel(m.month), port: port, spy: spy, rf: isNaN(rf) ? 0 : rf, ndx: ndx });
     });
     return out.length ? out : null;
   }
@@ -189,12 +189,21 @@ window.MT = (function () {
   }
 
   function growthSeries(monthly, start) {
-    var port = [start], spy = [start];
+    var port = [start], spy = [start], ndx = [start], ndxOk = true;
     monthly.forEach(function (m) {
       port.push(port[port.length - 1] * (1 + m.port / 100));
       spy.push(spy[spy.length - 1] * (1 + m.spy / 100));
+      if (ndxOk && isFinite(m.ndx)) {
+        ndx.push(ndx[ndx.length - 1] * (1 + m.ndx / 100));
+      } else {
+        ndxOk = false;
+        ndx.push(null); /* comparison series stops where data is missing */
+      }
     });
-    return { labels: ['Start'].concat(monthly.map(function (m) { return m.label; })), port: port, spy: spy };
+    return {
+      labels: ['Start'].concat(monthly.map(function (m) { return m.label; })),
+      port: port, spy: spy, ndx: ndx, ndxAvailable: ndxOk
+    };
   }
 
   function cumulativeReturn(monthly, key) {
@@ -212,15 +221,17 @@ window.MT = (function () {
   }
 
   function build(monthly, source) {
+    var growth = growthSeries(monthly, GROWTH_START);
     return {
       source: source, /* 'sheet' | 'json' */
       live: source === 'sheet',
       monthly: monthly,
       summary: computeSummary(monthly),
-      growth: growthSeries(monthly, GROWTH_START),
+      growth: growth,
       growthStart: GROWTH_START,
       portCumulative: cumulativeReturn(monthly, 'port'),
       spyCumulative: cumulativeReturn(monthly, 'spy'),
+      ndxCumulative: growth.ndxAvailable ? cumulativeReturn(monthly, 'ndx') : null,
       updatedLabel: lastUpdatedLabel(monthly),
       sinceLabel: monthly[0].label
     };
@@ -239,6 +250,12 @@ window.MT = (function () {
       return fetchCsv(DETAIL_CSV).then(parseSheetDetail).catch(function () { return null; })
         .then(function (sheet) {
           if (sheet && local) {
+            /* The Nasdaq 100 comparison column lives only in portfolio.json: merge it in by month. */
+            var ndxByLabel = {};
+            local.forEach(function (m) { ndxByLabel[m.label] = m.ndx; });
+            sheet.forEach(function (m) {
+              if (!isFinite(m.ndx) && isFinite(ndxByLabel[m.label])) m.ndx = ndxByLabel[m.label];
+            });
             var sheetLast = monthIndex(sheet[sheet.length - 1].label);
             var localLast = monthIndex(local[local.length - 1].label);
             return localLast > sheetLast ? build(local, 'json') : build(sheet, 'sheet');

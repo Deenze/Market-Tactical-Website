@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Market Tactical — shared stylesheet
+   Market Tactical: shared stylesheet
    Dark-first design with a light theme, driven by CSS custom properties.
    ========================================================================== */
 
@@ -7,7 +7,7 @@
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-head: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 
-  /* Light theme (default) — clean white, navy brand */
+  /* Light theme (default): clean white, navy brand */
   --bg: #ffffff;
   --bg-2: #f6f7f9;
   --card: #ffffff;
@@ -28,9 +28,10 @@
   --shadow: 0 10px 26px rgba(23, 43, 77, 0.09);
   --nav-bg: rgba(255, 255, 255, 0.88);
 
-  /* chart series (validated: blue + amber, CVD-safe in both modes) */
+  /* chart series (validated palette slots: blue, amber, aqua; CVD-safe in both modes) */
   --series-portfolio: #2a78d6;
   --series-benchmark: #c98500;
+  --series-nasdaq: #1baf7a;
 }
 
 html[data-theme='dark'] {
@@ -56,6 +57,7 @@ html[data-theme='dark'] {
 
   --series-portfolio: #3987e5;
   --series-benchmark: #c98500;
+  --series-nasdaq: #199e70;
 }
 
 * { box-sizing: border-box; }
@@ -658,6 +660,7 @@ a.card { text-decoration: none; color: inherit; display: block; }
 
 .legend-item .swatch.portfolio { background: var(--series-portfolio); }
 .legend-item .swatch.benchmark { background: var(--series-benchmark); }
+.legend-item .swatch.nasdaq { background: var(--series-nasdaq); }
 
 .legend-item .name { font-size: 0.86rem; color: var(--text-2); font-weight: 500; }
 
