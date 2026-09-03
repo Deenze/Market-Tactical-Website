@@ -1,17 +1,21 @@
 /* Market Tactical — portfolio data layer.
-   Source of truth is portfolio.json in the repository. While its
-   preferGoogleSheet flag is true, the published Google Sheet (CSV) is fetched
-   too and whichever record reaches a later month wins (tie goes to the sheet),
-   so updating either one moves the site forward; set the flag to false to
-   serve portfolio.json exclusively. */
+
+   Monthly returns come from portfolio.json in this repository and/or the
+   published Google Sheet (detail tab). When both load, whichever reaches a
+   later month is used (tie -> sheet); set "preferGoogleSheet": false in
+   portfolio.json to use the file exclusively.
+
+   Every summary metric on the site (CAGR, Sharpe, Sortino, information
+   ratio, beta, alpha, max drawdown) is computed HERE from that monthly
+   series with one documented methodology (see "Methodology" on the
+   portfolio page). Nothing is read from a summary tab, so the metric cards,
+   charts and the monthly table can never disagree with each other. */
 
 window.MT = (function () {
   'use strict';
 
   var PORTFOLIO_JSON = 'portfolio.json';
-
   var SHEET_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pub';
-  var SUMMARY_CSV = SHEET_BASE + '?gid=422018548&single=true&output=csv';
   var DETAIL_CSV = SHEET_BASE + '?gid=1598303926&single=true&output=csv';
 
   var GROWTH_START = 100000;
@@ -20,11 +24,10 @@ window.MT = (function () {
   var MONTHS_FULL = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
     'August', 'September', 'October', 'November', 'December'];
 
+  /* ---------- parsing ---------- */
+
   function parseCsv(text) {
-    var rows = [];
-    var row = [];
-    var cell = '';
-    var inQuotes = false;
+    var rows = [], row = [], cell = '', inQuotes = false;
     for (var i = 0; i < text.length; i++) {
       var c = text[i];
       if (inQuotes) {
@@ -47,7 +50,7 @@ window.MT = (function () {
     return rows;
   }
 
-  /* "0.45%" -> 0.45 ; "1.139786683" -> 1.139786683 */
+  /* "0.45%" -> 0.45 ; "1.1397" -> 1.1397 */
   function num(s) {
     if (s == null) return NaN;
     return parseFloat(String(s).replace(/[%,$\s]/g, ''));
@@ -57,8 +60,7 @@ window.MT = (function () {
   function monthLabel(raw) {
     var parts = String(raw).trim().split(/[-/ ]+/);
     if (parts.length !== 2) return String(raw);
-    var a = parts[0], b = parts[1];
-    var m, y;
+    var a = parts[0], b = parts[1], m, y;
     if (/^\d+$/.test(a)) { y = a; m = b; } else { m = a; y = b; }
     m = m.slice(0, 3);
     m = m.charAt(0).toUpperCase() + m.slice(1).toLowerCase();
@@ -66,59 +68,36 @@ window.MT = (function () {
     return m + ' ' + (y.length === 2 ? y : y.slice(-2));
   }
 
-  function parseSheetSummary(rows) {
-    if (rows.length < 2) return null;
-    var v = rows[1];
-    var s = {
-      sharpe: num(v[0]),
-      information: num(v[1]),
-      sortino: num(v[2]),
-      beta: num(v[3]),
-      alphaAnnual: num(v[5]),
-      cagr: num(v[6])
-    };
-    for (var k in s) { if (isNaN(s[k])) return null; }
-    return s;
+  /* "Aug 26" -> sortable integer; -1 if unparseable */
+  function monthIndex(label) {
+    var parts = String(label).split(' ');
+    var m = MONTHS.indexOf(parts[0]);
+    var y = parseInt(parts[1], 10);
+    if (m === -1 || isNaN(y)) return -1;
+    return (2000 + y) * 12 + m;
   }
 
+  /* Sheet detail tab: Month | SP500 (fraction) | RF monthly (fraction) | Modified-Dietz (%) | ... */
   function parseSheetDetail(rows) {
     var out = [];
     for (var i = 1; i < rows.length; i++) {
       var r = rows[i];
       if (!r[0] || r.length < 4) continue;
-      var spy = num(r[1]);
-      var port = num(r[3]);
+      var spy = num(r[1]), rf = num(r[2]), port = num(r[3]);
       if (isNaN(spy) || isNaN(port)) continue;
-      /* SP500 column is a raw fraction (0.0233); Modified-Dietz is "%" text. */
-      out.push({ label: monthLabel(r[0]), spy: spy * 100, port: port });
+      out.push({ label: monthLabel(r[0]), port: port, spy: spy * 100, rf: isNaN(rf) ? 0 : rf * 100 });
     }
     return out.length ? out : null;
   }
 
-  /* portfolio.json -> internal shape */
-  function parseLocalSummary(json) {
-    if (!json || !json.summary) return null;
-    var s = json.summary;
-    var out = {
-      sharpe: num(s.sharpe),
-      information: num(s.informationRatio),
-      sortino: num(s.sortino),
-      beta: num(s.beta),
-      alphaAnnual: num(s.alphaAnnualized),
-      cagr: num(s.cagr)
-    };
-    for (var k in out) { if (isNaN(out[k])) return null; }
-    return out;
-  }
-
+  /* portfolio.json: { monthly: [{ month, portfolio, sp500, rf }] } — all in percent */
   function parseLocalMonthly(json) {
     if (!json || !Array.isArray(json.monthly)) return null;
     var out = [];
     json.monthly.forEach(function (m) {
-      var port = num(m.portfolio);
-      var spy = num(m.sp500);
+      var port = num(m.portfolio), spy = num(m.sp500), rf = num(m.rf);
       if (!m.month || isNaN(port) || isNaN(spy)) return;
-      out.push({ label: monthLabel(m.month), port: port, spy: spy });
+      out.push({ label: monthLabel(m.month), port: port, spy: spy, rf: isNaN(rf) ? 0 : rf });
     });
     return out.length ? out : null;
   }
@@ -137,7 +116,77 @@ window.MT = (function () {
     });
   }
 
-  /* Derived series ----------------------------------------------------- */
+  /* ---------- statistics (inputs as fractions) ---------- */
+
+  function mean(a) {
+    var s = 0;
+    for (var i = 0; i < a.length; i++) s += a[i];
+    return a.length ? s / a.length : NaN;
+  }
+
+  function sampleVar(a) {
+    if (a.length < 2) return NaN;
+    var m = mean(a), s = 0;
+    for (var i = 0; i < a.length; i++) s += (a[i] - m) * (a[i] - m);
+    return s / (a.length - 1);
+  }
+
+  function sampleCov(a, b) {
+    if (a.length < 2) return NaN;
+    var ma = mean(a), mb = mean(b), s = 0;
+    for (var i = 0; i < a.length; i++) s += (a[i] - ma) * (b[i] - mb);
+    return s / (a.length - 1);
+  }
+
+  /* All metrics from the monthly series. Percent in, percent out. */
+  function computeSummary(monthly) {
+    var n = monthly.length;
+    var port = monthly.map(function (m) { return m.port / 100; });
+    var spy = monthly.map(function (m) { return m.spy / 100; });
+    var rf = monthly.map(function (m) { return m.rf / 100; });
+    var excess = port.map(function (p, i) { return p - rf[i]; });
+    var active = port.map(function (p, i) { return p - spy[i]; });
+    var SQ12 = Math.sqrt(12);
+
+    var sharpe = mean(excess) / Math.sqrt(sampleVar(excess)) * SQ12;
+    var information = mean(active) / Math.sqrt(sampleVar(active)) * SQ12;
+
+    /* Sortino: downside deviation over ALL months, shortfall vs the risk-free rate */
+    var dsum = 0;
+    excess.forEach(function (e) { if (e < 0) dsum += e * e; });
+    var downsideDev = Math.sqrt(dsum / n);
+    var sortino = downsideDev > 0 ? mean(excess) / downsideDev * SQ12 : NaN;
+
+    var beta = sampleCov(port, spy) / sampleVar(spy);
+    var alphaMonthly = mean(port) - (mean(rf) + beta * (mean(spy) - mean(rf)));
+    var alphaAnnual = Math.pow(1 + alphaMonthly, 12) - 1;
+
+    /* growth, CAGR, drawdown */
+    var cum = 1, peak = 1, maxDD = 0, maxDDLabel = '';
+    var drawdown = [0];
+    for (var i = 0; i < n; i++) {
+      cum *= 1 + port[i];
+      if (cum > peak) peak = cum;
+      var dd = cum / peak - 1;
+      drawdown.push(dd * 100);
+      if (dd < maxDD) { maxDD = dd; maxDDLabel = monthly[i].label; }
+    }
+    var cagr = Math.pow(cum, 12 / n) - 1;
+
+    return {
+      months: n,
+      sharpe: sharpe,
+      information: information,
+      sortino: sortino,
+      beta: beta,
+      alphaMonthly: alphaMonthly * 100,
+      alphaAnnual: alphaAnnual * 100,
+      cagr: cagr * 100,
+      maxDrawdown: maxDD * 100,
+      maxDrawdownMonth: maxDDLabel,
+      drawdown: drawdown
+    };
+  }
 
   function growthSeries(monthly, start) {
     var port = [start], spy = [start];
@@ -154,15 +203,6 @@ window.MT = (function () {
     return (g - 1) * 100;
   }
 
-  /* "Aug 26" -> sortable integer (months since year 0); -1 if unparseable */
-  function monthIndex(label) {
-    var parts = String(label).split(' ');
-    var m = MONTHS.indexOf(parts[0]);
-    var y = parseInt(parts[1], 10);
-    if (m === -1 || isNaN(y)) return -1;
-    return (2000 + y) * 12 + m;
-  }
-
   function lastUpdatedLabel(monthly) {
     var last = monthly[monthly.length - 1].label; /* e.g. "Feb 26" */
     var parts = last.split(' ');
@@ -171,12 +211,12 @@ window.MT = (function () {
     return MONTHS_FULL[idx] + ' 20' + parts[1];
   }
 
-  function build(summary, monthly, source) {
+  function build(monthly, source) {
     return {
       source: source, /* 'sheet' | 'json' */
       live: source === 'sheet',
-      summary: summary,
       monthly: monthly,
+      summary: computeSummary(monthly),
       growth: growthSeries(monthly, GROWTH_START),
       growthStart: GROWTH_START,
       portCumulative: cumulativeReturn(monthly, 'port'),
@@ -191,34 +231,25 @@ window.MT = (function () {
   function getData() {
     if (promise) return promise;
     promise = fetchJson(PORTFOLIO_JSON).catch(function () { return null; }).then(function (json) {
-      var localSummary = parseLocalSummary(json);
-      var localMonthly = parseLocalMonthly(json);
+      var local = parseLocalMonthly(json);
       var preferSheet = !json || json.preferGoogleSheet !== false;
 
-      if (!preferSheet && localSummary && localMonthly) {
-        return build(localSummary, localMonthly, 'json');
-      }
+      if (!preferSheet && local) return build(local, 'json');
 
-      return Promise.all([
-        fetchCsv(SUMMARY_CSV).then(parseSheetSummary).catch(function () { return null; }),
-        fetchCsv(DETAIL_CSV).then(parseSheetDetail).catch(function () { return null; })
-      ]).then(function (res) {
-        var sheetOk = !!(res[0] && res[1]);
-        var localOk = !!(localSummary && localMonthly);
-        if (sheetOk && localOk) {
-          var sheetLast = monthIndex(res[1][res[1].length - 1].label);
-          var localLast = monthIndex(localMonthly[localMonthly.length - 1].label);
-          return localLast > sheetLast
-            ? build(localSummary, localMonthly, 'json')
-            : build(res[0], res[1], 'sheet');
-        }
-        if (sheetOk) return build(res[0], res[1], 'sheet');
-        if (localOk) return build(localSummary, localMonthly, 'json');
-        return null; /* nothing available — pages keep their static fallbacks */
-      });
+      return fetchCsv(DETAIL_CSV).then(parseSheetDetail).catch(function () { return null; })
+        .then(function (sheet) {
+          if (sheet && local) {
+            var sheetLast = monthIndex(sheet[sheet.length - 1].label);
+            var localLast = monthIndex(local[local.length - 1].label);
+            return localLast > sheetLast ? build(local, 'json') : build(sheet, 'sheet');
+          }
+          if (sheet) return build(sheet, 'sheet');
+          if (local) return build(local, 'json');
+          return null; /* nothing available */
+        });
     });
     return promise;
   }
 
-  return { getData: getData };
+  return { getData: getData, computeSummary: computeSummary };
 })();

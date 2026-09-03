@@ -15,6 +15,7 @@
     return {
       portfolio: cssVar('--series-portfolio'),
       benchmark: cssVar('--series-benchmark'),
+      down: cssVar('--down'),
       grid: cssVar('--grid-line'),
       ink: cssVar('--text-3'),
       tooltipBg: cssVar('--card-2'),
@@ -22,7 +23,11 @@
     };
   }
 
-  function baseOptions(c, valueSuffix) {
+  function fmtPct(v, digits) {
+    return (v >= 0 ? '+' : '') + v.toFixed(digits == null ? 2 : digits) + '%';
+  }
+
+  function baseOptions(c, kind) {
     return {
       responsive: true,
       maintainAspectRatio: false,
@@ -42,9 +47,9 @@
           callbacks: {
             label: function (item) {
               var v = item.parsed.y;
-              var text = valueSuffix === '$'
+              var text = kind === '$'
                 ? '$' + Math.round(v).toLocaleString('en-US')
-                : (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
+                : fmtPct(v, 2);
               return ' ' + item.dataset.label + ': ' + text;
             }
           }
@@ -59,19 +64,20 @@
         y: {
           grid: { color: c.grid },
           border: { display: false },
+          max: kind === 'dd' ? 0 : undefined,
           ticks: {
             color: c.ink,
             font: { size: 11 },
             callback: function (v) {
-              return valueSuffix === '$'
-                ? '$' + Number(v).toLocaleString('en-US')
-                : v + '%';
+              return kind === '$' ? '$' + Number(v).toLocaleString('en-US') : v + '%';
             }
           }
         }
       }
     };
   }
+
+  function register(chart, restyle) { charts.push({ chart: chart, restyle: restyle }); }
 
   function buildGrowthChart(d) {
     var el = document.getElementById('growthChart');
@@ -82,40 +88,22 @@
       data: {
         labels: d.growth.labels,
         datasets: [
-          {
-            label: 'Portfolio',
-            data: d.growth.port,
-            borderColor: c.portfolio,
-            backgroundColor: c.portfolio + '22',
-            fill: true,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: c.portfolio,
-            tension: 0.25
-          },
-          {
-            label: 'S&P 500',
-            data: d.growth.spy,
-            borderColor: c.benchmark,
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: c.benchmark,
-            tension: 0.25
-          }
+          { label: 'Portfolio', data: d.growth.port, borderColor: c.portfolio, backgroundColor: c.portfolio + '22',
+            fill: true, borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.portfolio, tension: 0.25 },
+          { label: 'S&P 500', data: d.growth.spy, borderColor: c.benchmark,
+            borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.benchmark, tension: 0.25 }
         ]
       },
       options: baseOptions(c, '$')
     });
-    charts.push({ chart: chart, restyle: function () {
+    register(chart, function () {
       var cc = chartColors();
       chart.data.datasets[0].borderColor = cc.portfolio;
       chart.data.datasets[0].backgroundColor = cc.portfolio + '22';
       chart.data.datasets[1].borderColor = cc.benchmark;
       chart.options = baseOptions(cc, '$');
       chart.update();
-    } });
+    });
   }
 
   function buildMonthlyChart(d) {
@@ -127,49 +115,61 @@
       data: {
         labels: d.monthly.map(function (m) { return m.label; }),
         datasets: [
-          {
-            label: 'Portfolio',
-            data: d.monthly.map(function (m) { return m.port; }),
-            backgroundColor: c.portfolio,
-            borderRadius: 4,
-            maxBarThickness: 26
-          },
-          {
-            label: 'S&P 500',
-            data: d.monthly.map(function (m) { return m.spy; }),
-            backgroundColor: c.benchmark,
-            borderRadius: 4,
-            maxBarThickness: 26
-          }
+          { label: 'Portfolio', data: d.monthly.map(function (m) { return m.port; }), backgroundColor: c.portfolio, borderRadius: 4, maxBarThickness: 26 },
+          { label: 'S&P 500', data: d.monthly.map(function (m) { return m.spy; }), backgroundColor: c.benchmark, borderRadius: 4, maxBarThickness: 26 }
         ]
       },
       options: baseOptions(c, '%')
     });
-    charts.push({ chart: chart, restyle: function () {
+    register(chart, function () {
       var cc = chartColors();
       chart.data.datasets[0].backgroundColor = cc.portfolio;
       chart.data.datasets[1].backgroundColor = cc.benchmark;
       chart.options = baseOptions(cc, '%');
       chart.update();
-    } });
+    });
+  }
+
+  function buildDrawdownChart(d) {
+    var el = document.getElementById('drawdownChart');
+    if (!el) return;
+    var c = chartColors();
+    var chart = new Chart(el, {
+      type: 'line',
+      data: {
+        labels: d.growth.labels,
+        datasets: [
+          { label: 'Drawdown', data: d.summary.drawdown, borderColor: c.down, backgroundColor: c.down + '26',
+            fill: 'origin', borderWidth: 2, pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: c.down, tension: 0.2 }
+        ]
+      },
+      options: baseOptions(c, 'dd')
+    });
+    register(chart, function () {
+      var cc = chartColors();
+      chart.data.datasets[0].borderColor = cc.down;
+      chart.data.datasets[0].backgroundColor = cc.down + '26';
+      chart.options = baseOptions(cc, 'dd');
+      chart.update();
+    });
+  }
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
   }
 
   function fillLegends(d) {
     var pEnd = d.growth.port[d.growth.port.length - 1];
     var sEnd = d.growth.spy[d.growth.spy.length - 1];
-    var set = function (id, text) {
-      var el = document.getElementById(id);
-      if (el) el.textContent = text;
-    };
-    set('growthPortVal', '$' + Math.round(pEnd).toLocaleString('en-US') +
-      ' (' + (d.portCumulative >= 0 ? '+' : '') + d.portCumulative.toFixed(1) + '%)');
-    set('growthSpyVal', '$' + Math.round(sEnd).toLocaleString('en-US') +
-      ' (' + (d.spyCumulative >= 0 ? '+' : '') + d.spyCumulative.toFixed(1) + '%)');
+    setText('growthPortVal', '$' + Math.round(pEnd).toLocaleString('en-US') + ' (' + fmtPct(d.portCumulative, 1) + ')');
+    setText('growthSpyVal', '$' + Math.round(sEnd).toLocaleString('en-US') + ' (' + fmtPct(d.spyCumulative, 1) + ')');
 
     var best = d.monthly.reduce(function (a, b) { return b.port > a.port ? b : a; });
     var worst = d.monthly.reduce(function (a, b) { return b.port < a.port ? b : a; });
-    set('monthlyBestVal', '+' + best.port.toFixed(1) + '% (' + best.label + ')');
-    set('monthlyWorstVal', worst.port.toFixed(1) + '% (' + worst.label + ')');
+    setText('monthlyBestVal', fmtPct(best.port, 1) + ' (' + best.label + ')');
+    setText('monthlyWorstVal', fmtPct(worst.port, 1) + ' (' + worst.label + ')');
+    setText('drawdownMaxVal', d.summary.maxDrawdown.toFixed(1) + '% (' + d.summary.maxDrawdownMonth + ')');
   }
 
   function fillMetrics(d) {
@@ -180,12 +180,16 @@
       { id: 'mSortino', value: s.sortino, decimals: 2 },
       { id: 'mInfo', value: s.information, decimals: 2 },
       { id: 'mAlpha', value: s.alphaAnnual, decimals: 1, suffix: '%' },
-      { id: 'mBeta', value: s.beta, decimals: 2 }
+      { id: 'mBeta', value: s.beta, decimals: 2 },
+      { id: 'mMaxDD', value: s.maxDrawdown, decimals: 1, suffix: '%' }
     ];
     defs.forEach(function (m) {
       var el = document.getElementById(m.id);
-      if (el) mtCountUp(el, m.value, { decimals: m.decimals, suffix: m.suffix || '' });
+      if (el && isFinite(m.value)) mtCountUp(el, m.value, { decimals: m.decimals, suffix: m.suffix || '' });
     });
+    setText('mAlphaSub', fmtPct(s.alphaMonthly, 2) + ' per month, compounded to a year.');
+    setText('mMaxDDSub', 'Largest peak-to-trough decline of the month-end value (' + s.maxDrawdownMonth + ').');
+    setText('mMonths', String(s.months));
   }
 
   function fillTable(d) {
@@ -195,26 +199,21 @@
     d.monthly.forEach(function (m) {
       var diff = m.port - m.spy;
       html += '<tr><td>' + m.label + '</td>' +
-        '<td class="' + (m.port >= 0 ? 'pos' : 'neg') + '">' + (m.port >= 0 ? '+' : '') + m.port.toFixed(2) + '%</td>' +
-        '<td class="' + (m.spy >= 0 ? 'pos' : 'neg') + '">' + (m.spy >= 0 ? '+' : '') + m.spy.toFixed(2) + '%</td>' +
-        '<td class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + (diff >= 0 ? '+' : '') + diff.toFixed(2) + '%</td></tr>';
+        '<td class="' + (m.port >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.port) + '</td>' +
+        '<td class="' + (m.spy >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.spy) + '</td>' +
+        '<td class="' + (diff >= 0 ? 'pos' : 'neg') + '">' + fmtPct(diff) + '</td></tr>';
     });
     body.innerHTML = html;
   }
 
   function fillUpdated(d) {
-    var el = document.getElementById('updatedLabel');
-    if (el) el.textContent = 'Updated through ' + d.updatedLabel +
-      (d.live ? ' · live from source data' : '');
-    document.querySelectorAll('[data-since]').forEach(function (n) {
-      n.textContent = d.sinceLabel;
-    });
+    setText('updatedLabel', 'Updated through ' + d.updatedLabel + (d.live ? ' · live from source data' : ''));
+    document.querySelectorAll('[data-since]').forEach(function (n) { n.textContent = d.sinceLabel; });
   }
 
   MT.getData().then(function (d) {
     if (!d) {
-      var el = document.getElementById('updatedLabel');
-      if (el) el.textContent = 'Performance data is temporarily unavailable';
+      setText('updatedLabel', 'Performance data is temporarily unavailable');
       return;
     }
     fillUpdated(d);
@@ -222,6 +221,7 @@
     fillLegends(d);
     buildGrowthChart(d);
     buildMonthlyChart(d);
+    buildDrawdownChart(d);
     fillTable(d);
   });
 

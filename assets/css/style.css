@@ -738,6 +738,10 @@ table.data-table th {
 table.data-table td { color: var(--text-2); }
 
 table.data-table td.pos { color: var(--up); }
+
+.methodology ul { margin: 0; padding-left: 20px; color: var(--text-2); font-size: 0.92rem; }
+.methodology li { margin-bottom: 10px; }
+.methodology strong { color: var(--text); }
 table.data-table td.neg { color: var(--down); }
 
 .sheet-wrap iframe {

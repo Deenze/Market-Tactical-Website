@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio Metrics — Market Tactical</title>
-    <meta name="description" content="A transparent, month-by-month portfolio track record benchmarked against the S&P 500 — CAGR, Sharpe, Sortino, alpha, and beta, computed from published source data.">
+    <meta name="description" content="A transparent, month-by-month portfolio track record benchmarked against the S&P 500 — CAGR, Sharpe, Sortino, alpha, beta, and max drawdown, computed from published source data.">
     <meta property="og:title" content="Portfolio Metrics — Market Tactical">
     <meta property="og:description" content="A transparent, month-by-month track record benchmarked against the S&P 500.">
     <meta property="og:type" content="website">
@@ -59,7 +59,7 @@
             <div class="container">
                 <div class="section-kicker">Track record</div>
                 <h1>Portfolio Performance</h1>
-                <p>Every number on this page is computed from my published source spreadsheet — including the losing months. Benchmark is the S&amp;P&nbsp;500.</p>
+                <p>Every number on this page is computed from the published month-by-month source data — including the losing months. Benchmark is the S&amp;P&nbsp;500 total return.</p>
                 <span class="updated-pill"><span class="dot"></span><span id="updatedLabel">Loading latest performance data&hellip;</span></span>
             </div>
         </header>
@@ -69,39 +69,44 @@
                 <div class="section-head reveal">
                     <div class="section-kicker">Key metrics</div>
                     <h2>Risk &amp; return at a glance</h2>
-                    <p>Ratios are calculated from average monthly returns, annualized.</p>
+                    <p>Every figure is recomputed on each page load from the <span id="mMonths">&mdash;</span> monthly returns in the table below, using the methodology documented at the bottom of this page.</p>
                 </div>
 
                 <div class="metrics-grid reveal">
                     <div class="metric-card">
                         <h3>CAGR</h3>
-                        <div class="value" id="mCagr">51.6%</div>
+                        <div class="value" id="mCagr">&mdash;</div>
                         <p>Geometric annualized return of the portfolio.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sharpe Ratio</h3>
-                        <div class="value" id="mSharpe">1.41</div>
+                        <div class="value" id="mSharpe">&mdash;</div>
                         <p>Return per unit of total risk — higher means a more favorable risk-to-reward profile.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sortino Ratio</h3>
-                        <div class="value" id="mSortino">2.63</div>
+                        <div class="value" id="mSortino">&mdash;</div>
                         <p>Like Sharpe, but only penalizes downside volatility.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Information Ratio</h3>
-                        <div class="value" id="mInfo">1.26</div>
+                        <div class="value" id="mInfo">&mdash;</div>
                         <p>Excess return over the benchmark relative to tracking error.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Alpha (annualized)</h3>
-                        <div class="value" id="mAlpha">15.1%</div>
-                        <p>Outperformance versus the market on a risk-adjusted basis.</p>
+                        <div class="value" id="mAlpha">&mdash;</div>
+                        <p id="mAlphaSub">Outperformance versus the market on a risk-adjusted basis.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Beta (vs S&amp;P 500)</h3>
-                        <div class="value" id="mBeta">1.86</div>
+                        <div class="value" id="mBeta">&mdash;</div>
                         <p>Sensitivity to market moves — above 1 means more volatile than the index.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Max Drawdown</h3>
+                        <div class="value" id="mMaxDD">&mdash;</div>
+                        <p id="mMaxDDSub">Largest peak-to-trough decline of the month-end portfolio value.</p>
                     </div>
                 </div>
 
@@ -159,6 +164,24 @@
                     </div>
                 </div>
 
+                <div class="chart-panel reveal">
+                    <div class="chart-head">
+                        <div>
+                            <h3>Drawdown</h3>
+                            <p class="chart-sub">How far the portfolio sat below its previous month-end high at each point in time.</p>
+                        </div>
+                    </div>
+                    <div class="chart-legend" role="list">
+                        <div class="legend-item" role="listitem">
+                            <span class="name">Max drawdown:</span>
+                            <span class="val" id="drawdownMaxVal">—</span>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="drawdownChart" role="img" aria-label="Area chart of portfolio drawdown from its previous peak over time. The maximum drawdown is stated above the chart."></canvas>
+                    </div>
+                </div>
+
                 <details class="data-details reveal">
                     <summary>Monthly data table</summary>
                     <div class="details-body">
@@ -179,16 +202,27 @@
                 </details>
 
                 <details class="data-details reveal">
+                    <summary>Methodology</summary>
+                    <div class="details-body methodology">
+                        <ul>
+                            <li><strong>Portfolio returns</strong> are monthly Modified-Dietz returns computed from brokerage statements, with external cash flows time-weighted within the month. No adjustments beyond what the statements already reflect.</li>
+                            <li><strong>Benchmark</strong> is the S&amp;P 500 total return index (dividends reinvested), month-end close to month-end close. The <strong>risk-free rate</strong> is a monthly Treasury-bill proxy.</li>
+                            <li><strong>CAGR</strong> is geometric: (&prod;(1 + r))<sup>12/n</sup> &minus; 1.</li>
+                            <li><strong>Sharpe</strong> = mean(r &minus; rf) / &sigma;(r &minus; rf) &times; &radic;12, using the sample standard deviation. The <strong>information ratio</strong> is the same calculation on (r &minus; benchmark).</li>
+                            <li><strong>Sortino</strong> = mean(r &minus; rf) / downside deviation &times; &radic;12, where downside deviation = &radic;(&sum; min(r &minus; rf, 0)<sup>2</sup> / n) over all months.</li>
+                            <li><strong>Beta</strong> = cov(r, benchmark) / var(benchmark). <strong>Alpha</strong> is Jensen&rsquo;s alpha: monthly &alpha; = mean(r) &minus; [rf + &beta;(benchmark &minus; rf)], annualized geometrically as (1 + &alpha;)<sup>12</sup> &minus; 1 for consistency with the CAGR.</li>
+                            <li><strong>Max drawdown</strong> is the largest peak-to-trough decline of the month-end growth series.</li>
+                            <li>All metrics are computed in the browser from the monthly series shown in the table, so the cards, charts and table always describe the same data.</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details class="data-details reveal">
                     <summary>Source spreadsheet (Google Sheets)</summary>
                     <div class="details-body">
-                        <p style="color: var(--text-2); font-size: 0.9rem; margin-top: 0;">The published source spreadsheet. It is updated on its own monthly cycle and may trail the figures above by a statement period.</p>
-                        <div class="sheet-wrap" style="margin-bottom: 16px;">
-                            <iframe loading="lazy" title="Portfolio summary metrics"
-                                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=422018548&amp;single=true&amp;widget=true&amp;headers=false"
-                                style="height: 200px;"></iframe>
-                        </div>
+                        <p style="color: var(--text-2); font-size: 0.9rem; margin-top: 0;">The published month-by-month source data. It is updated on its own monthly cycle and may trail the figures above by a statement period.</p>
                         <div class="sheet-wrap">
-                            <iframe loading="lazy" title="Detailed month-by-month portfolio vs SPY"
+                            <iframe loading="lazy" title="Detailed month-by-month portfolio vs S&amp;P 500"
                                 src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"
                                 style="height: 450px;"></iframe>
                         </div>
