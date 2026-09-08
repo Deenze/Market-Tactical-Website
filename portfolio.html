@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio Metrics | Market Tactical</title>
-    <meta name="description" content="A transparent, month-by-month portfolio track record benchmarked against the S&P 500: CAGR, Sharpe, Sortino, alpha, beta, and max drawdown, computed from published source data.">
+    <meta name="description" content="A transparent, month-by-month portfolio track record benchmarked against the S&P 500: CAGR, volatility, Sharpe, Sortino, alpha, beta, drawdown and rolling statistics, read live from the source spreadsheet.">
     <meta property="og:title" content="Portfolio Metrics | Market Tactical">
     <meta property="og:description" content="A transparent, month-by-month track record benchmarked against the S&P 500.">
     <meta property="og:type" content="website">
@@ -59,7 +59,7 @@
             <div class="container">
                 <div class="section-kicker">Track record</div>
                 <h1>Portfolio Performance</h1>
-                <p>Every number on this page is computed from the published month-by-month source data, including the losing months. Risk metrics are measured against the S&amp;P&nbsp;500 total return; the Nasdaq&nbsp;100 is shown for comparison.</p>
+                <p>Every number on this page is read live from the published month-by-month source spreadsheet, including the losing months. Risk metrics are measured against the S&amp;P&nbsp;500 total return; the Nasdaq&nbsp;100 is shown for comparison.</p>
                 <span class="updated-pill"><span class="dot"></span><span id="updatedLabel">Loading latest performance data&hellip;</span></span>
             </div>
         </header>
@@ -69,44 +69,59 @@
                 <div class="section-head reveal">
                     <div class="section-kicker">Key metrics</div>
                     <h2>Risk &amp; return at a glance</h2>
-                    <p>Every figure is recomputed on each page load from the <span id="mMonths">…</span> monthly returns in the table below, using the methodology documented at the bottom of this page.</p>
+                    <p>Computed in the source spreadsheet from <span id="mMonths">…</span> monthly returns and refreshed on every page load. Standard errors, confidence intervals and p-values for each figure are in the full table further down.</p>
                 </div>
 
                 <div class="metrics-grid reveal">
                     <div class="metric-card">
                         <h3>CAGR</h3>
                         <div class="value" id="mCagr">…</div>
-                        <p>Geometric annualized return of the portfolio.</p>
+                        <p>Geometric annualised return of the portfolio.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Volatility (annualised)</h3>
+                        <div class="value" id="mVol">…</div>
+                        <p id="mVolSub">Sample standard deviation of monthly returns, annualised.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sharpe Ratio</h3>
                         <div class="value" id="mSharpe">…</div>
-                        <p>Return per unit of total risk. Higher means a more favorable risk-to-reward profile.</p>
+                        <p>Excess return per unit of total risk. Higher means a more favorable risk-to-reward profile.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Sortino Ratio</h3>
                         <div class="value" id="mSortino">…</div>
-                        <p>Like Sharpe, but only penalizes downside volatility.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Information Ratio</h3>
-                        <div class="value" id="mInfo">…</div>
-                        <p>Excess return over the benchmark relative to tracking error.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Alpha (annualized)</h3>
-                        <div class="value" id="mAlpha">…</div>
-                        <p id="mAlphaSub">Outperformance versus the market on a risk-adjusted basis.</p>
-                    </div>
-                    <div class="metric-card">
-                        <h3>Beta (vs S&amp;P 500)</h3>
-                        <div class="value" id="mBeta">…</div>
-                        <p>Sensitivity to market moves. Above 1 means more volatile than the index.</p>
+                        <p>Like Sharpe, but only penalises downside volatility.</p>
                     </div>
                     <div class="metric-card">
                         <h3>Max Drawdown</h3>
                         <div class="value" id="mMaxDD">…</div>
                         <p id="mMaxDDSub">Largest peak-to-trough decline of the month-end portfolio value.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Beta (vs S&amp;P 500)</h3>
+                        <div class="value" id="mBeta">…</div>
+                        <p id="mBetaSub">Sensitivity to market moves. Above 1 means more volatile than the index.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Alpha (annualised)</h3>
+                        <div class="value" id="mAlpha">…</div>
+                        <p id="mAlphaSub">Return not explained by market exposure (Jensen&rsquo;s alpha).</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Information Ratio</h3>
+                        <div class="value" id="mInfo">…</div>
+                        <p id="mInfoSub">Active return over the benchmark relative to tracking error.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Hit Rate</h3>
+                        <div class="value" id="mHit">…</div>
+                        <p>Share of months with a positive return.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>R-squared</h3>
+                        <div class="value" id="mRsq">…</div>
+                        <p id="mRsqSub">Share of the portfolio&rsquo;s variance explained by the benchmark.</p>
                     </div>
                 </div>
 
@@ -187,6 +202,25 @@
                     </div>
                 </div>
 
+                <div class="chart-panel reveal" id="rollingPanel" hidden>
+                    <div class="chart-head">
+                        <div>
+                            <h3>Rolling 12-month beta</h3>
+                            <p class="chart-sub">Market sensitivity measured over a trailing 12-month window ending each month, against the S&amp;P&nbsp;500 price return. The dashed line marks a beta of 1.0.</p>
+                        </div>
+                    </div>
+                    <div class="chart-legend" role="list">
+                        <div class="legend-item" role="listitem">
+                            <span class="swatch portfolio"></span>
+                            <span class="name">Latest:</span>
+                            <span class="val" id="rollingLatestVal">…</span>
+                        </div>
+                    </div>
+                    <div class="chart-box">
+                        <canvas id="rollingChart" role="img" aria-label="Line chart of the portfolio's rolling twelve month beta against the S and P 500, with a reference line at one. A table of the rolling statistics is available below."></canvas>
+                    </div>
+                </div>
+
                 <details class="data-details reveal">
                     <summary>Monthly data table</summary>
                     <div class="details-body">
@@ -207,31 +241,61 @@
                     </div>
                 </details>
 
-                <details class="data-details reveal">
-                    <summary>Methodology</summary>
-                    <div class="details-body methodology">
-                        <ul>
-                            <li><strong>Portfolio returns</strong> are monthly Modified-Dietz returns computed from brokerage statements, with external cash flows time-weighted within the month. No adjustments beyond what the statements already reflect.</li>
-                            <li><strong>Benchmark</strong> is the S&amp;P 500 total return index (dividends reinvested), month-end close to month-end close. The <strong>risk-free rate</strong> is a monthly Treasury-bill proxy. The Nasdaq&nbsp;100 line (QQQ, dividends reinvested) is shown for comparison only; every risk metric uses the S&amp;P&nbsp;500.</li>
-                            <li><strong>CAGR</strong> is geometric: (&prod;(1 + r))<sup>12/n</sup> &minus; 1.</li>
-                            <li><strong>Sharpe</strong> = mean(r &minus; rf) / &sigma;(r &minus; rf) &times; &radic;12, using the sample standard deviation. The <strong>information ratio</strong> is the same calculation on (r &minus; benchmark).</li>
-                            <li><strong>Sortino</strong> = mean(r &minus; rf) / downside deviation &times; &radic;12, where downside deviation = &radic;(&sum; min(r &minus; rf, 0)<sup>2</sup> / n) over all months.</li>
-                            <li><strong>Beta</strong> = cov(r, benchmark) / var(benchmark). <strong>Alpha</strong> is Jensen&rsquo;s alpha: monthly &alpha; = mean(r) &minus; [rf + &beta;(benchmark &minus; rf)], annualized geometrically as (1 + &alpha;)<sup>12</sup> &minus; 1 for consistency with the CAGR.</li>
-                            <li><strong>Max drawdown</strong> is the largest peak-to-trough decline of the month-end growth series.</li>
-                            <li>All metrics are computed in the browser from the monthly series shown in the table, so the cards, charts and table always describe the same data.</li>
-                        </ul>
+                <details class="data-details reveal" id="metricsDetails" hidden>
+                    <summary>All metrics, with standard errors and conventions</summary>
+                    <div class="details-body">
+                        <p style="color: var(--text-2); font-size: 0.9rem; margin-top: 0;">Every statistic the source spreadsheet computes, exactly as it computes it. The first two columns measure against the S&amp;P&nbsp;500 price return and total return respectively.</p>
+                        <div class="table-wrap">
+                            <table class="data-table metrics-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Metric</th>
+                                        <th scope="col">vs S&amp;P price</th>
+                                        <th scope="col">vs S&amp;P total</th>
+                                        <th scope="col">Std. error</th>
+                                        <th scope="col">Convention</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metricsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="data-details reveal" id="rollingDetails" hidden>
+                    <summary>Rolling 12-month statistics</summary>
+                    <div class="details-body">
+                        <div class="table-wrap">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Window ending</th>
+                                        <th scope="col">Beta</th>
+                                        <th scope="col">R-squared</th>
+                                        <th scope="col">Alpha (ann.)</th>
+                                        <th scope="col">Volatility (ann.)</th>
+                                        <th scope="col">12-month return</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rollingTableBody"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </details>
 
                 <details class="data-details reveal">
-                    <summary>Source spreadsheet (Google Sheets)</summary>
-                    <div class="details-body">
-                        <p style="color: var(--text-2); font-size: 0.9rem; margin-top: 0;">The published month-by-month source data. It is updated on its own monthly cycle and may trail the figures above by a statement period.</p>
-                        <div class="sheet-wrap">
-                            <iframe loading="lazy" title="Detailed month-by-month portfolio vs S&amp;P 500"
-                                src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSU9Z7gx7nccvXMvdgPL9ZbhVQDwYhxfEz7jL5Vxw_Hhv4tbDnBBP8XUaTLnau3AAor6b5FtYwhB5Ne/pubhtml?gid=1598303926&amp;single=true&amp;widget=true&amp;headers=false"
-                                style="height: 450px;"></iframe>
-                        </div>
+                    <summary>Methodology and sources</summary>
+                    <div class="details-body methodology">
+                        <ul>
+                            <li><strong>Portfolio returns</strong> are monthly Modified-Dietz returns computed from brokerage statements, with external cash flows time-weighted within the month. No adjustments beyond what the statements already reflect.</li>
+                            <li><strong>Benchmark</strong> is the S&amp;P&nbsp;500. The spreadsheet carries its price return and a total-return proxy (price return plus a constant dividend yield of 1.25% a year). Headline cards use the total-return column; the full table shows both. The <strong>risk-free rate</strong> is a monthly Treasury-bill proxy.</li>
+                            <li><strong>Every statistic</strong> is computed inside the source spreadsheet by live formulas and read by this page on each load, so the cards, the tables and the spreadsheet always agree. The Convention column in the full table states the exact formula behind each figure.</li>
+                            <li><strong>Uncertainty</strong>: standard errors, t-statistics, p-values and 95% confidence intervals are reported for the mean return, beta, alpha, correlation and the information ratio, so readers can judge how much of a 20-month record is noise.</li>
+                            <li><strong>Conventions</strong>: CAGR is geometric. Sharpe, Sortino and the information ratio annualise the monthly mean by 12 and the monthly deviation by &radic;12. Sortino uses the risk-free rate as its target and a full-sample downside deviation. Beta and alpha come from an ordinary least squares regression of portfolio excess return on benchmark excess return; alpha is annualised arithmetically (monthly times 12).</li>
+                            <li><strong>Max drawdown</strong> is measured on month-end values and understates intra-month drawdown.</li>
+                            <li>The <strong>Nasdaq&nbsp;100</strong> line (QQQ, dividends reinvested) is stored in the site repository and shown for comparison only; no risk metric uses it.</li>
+                        </ul>
+                        <p style="margin: 18px 0 0;"><a class="btn btn-ghost" data-sheet-link href="https://docs.google.com/spreadsheets/d/1mKt_mD3YIft_QOw7TffRbx9GNyOMXdp5_bKlB6sSmmQ/edit" target="_blank" rel="noopener">Open the source spreadsheet</a></p>
                     </div>
                 </details>
 

@@ -1,4 +1,4 @@
-/* Market Tactical: portfolio page: metric cards, charts, data table */
+/* Market Tactical: portfolio page. Metric cards, charts and tables, all fed by MT.getData(). */
 (function () {
   'use strict';
 
@@ -17,6 +17,7 @@
       benchmark: cssVar('--series-benchmark'),
       nasdaq: cssVar('--series-nasdaq'),
       down: cssVar('--down'),
+      ref: cssVar('--text-3'),
       grid: cssVar('--grid-line'),
       ink: cssVar('--text-3'),
       tooltipBg: cssVar('--card-2'),
@@ -26,6 +27,20 @@
 
   function fmtPct(v, digits) {
     return (v >= 0 ? '+' : '') + v.toFixed(digits == null ? 2 : digits) + '%';
+  }
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function show(id, visible) {
+    var el = document.getElementById(id);
+    if (el) el.hidden = !visible;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function baseOptions(c, kind) {
@@ -45,11 +60,12 @@
           cornerRadius: 10,
           boxPadding: 6,
           usePointStyle: true,
+          filter: function (item) { return !item.dataset.isReference; },
           callbacks: {
             label: function (item) {
               var v = item.parsed.y;
-              var text = kind === '$'
-                ? '$' + Math.round(v).toLocaleString('en-US')
+              var text = kind === '$' ? '$' + Math.round(v).toLocaleString('en-US')
+                : kind === 'x' ? v.toFixed(2)
                 : fmtPct(v, 2);
               return ' ' + item.dataset.label + ': ' + text;
             }
@@ -70,7 +86,9 @@
             color: c.ink,
             font: { size: 11 },
             callback: function (v) {
-              return kind === '$' ? '$' + Number(v).toLocaleString('en-US') : v + '%';
+              return kind === '$' ? '$' + Number(v).toLocaleString('en-US')
+                : kind === 'x' ? Number(v).toFixed(1)
+                : v + '%';
             }
           }
         }
@@ -79,6 +97,8 @@
   }
 
   function register(chart, restyle) { charts.push({ chart: chart, restyle: restyle }); }
+
+  /* ---------- charts ---------- */
 
   function buildGrowthChart(d) {
     var el = document.getElementById('growthChart');
@@ -105,7 +125,6 @@
       chart.data.datasets[0].backgroundColor = cc.portfolio + '22';
       chart.data.datasets[1].borderColor = cc.benchmark;
       chart.data.datasets[2].borderColor = cc.nasdaq;
-      chart.data.datasets[2].pointHoverBackgroundColor = cc.nasdaq;
       chart.options = baseOptions(cc, '$');
       chart.update();
     });
@@ -159,10 +178,36 @@
     });
   }
 
-  function setText(id, text) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = text;
+  function buildRollingChart(d) {
+    var el = document.getElementById('rollingChart');
+    if (!el || !d.rolling) return;
+    var c = chartColors();
+    var labels = d.rolling.map(function (r) { return r.label; });
+    var chart = new Chart(el, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          { label: 'Rolling 12-month beta', data: d.rolling.map(function (r) { return r.beta; }), borderColor: c.portfolio,
+            backgroundColor: c.portfolio + '22', fill: false, borderWidth: 2, pointRadius: 3, pointHoverRadius: 6,
+            pointBackgroundColor: c.portfolio, tension: 0.2 },
+          { label: 'Beta of 1.0 (moves with the index)', data: labels.map(function () { return 1; }), borderColor: c.ref,
+            borderDash: [6, 6], borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0, isReference: true }
+        ]
+      },
+      options: baseOptions(c, 'x')
+    });
+    register(chart, function () {
+      var cc = chartColors();
+      chart.data.datasets[0].borderColor = cc.portfolio;
+      chart.data.datasets[0].pointBackgroundColor = cc.portfolio;
+      chart.data.datasets[1].borderColor = cc.ref;
+      chart.options = baseOptions(cc, 'x');
+      chart.update();
+    });
   }
+
+  /* ---------- text and tables ---------- */
 
   function fillLegends(d) {
     var pEnd = d.growth.port[d.growth.port.length - 1];
@@ -178,36 +223,61 @@
     var worst = d.monthly.reduce(function (a, b) { return b.port < a.port ? b : a; });
     setText('monthlyBestVal', fmtPct(best.port, 1) + ' (' + best.label + ')');
     setText('monthlyWorstVal', fmtPct(worst.port, 1) + ' (' + worst.label + ')');
-    setText('drawdownMaxVal', d.summary.maxDrawdown.toFixed(1) + '% (' + d.summary.maxDrawdownMonth + ')');
+    var s = d.summary;
+    setText('drawdownMaxVal', isFinite(s.maxDrawdown)
+      ? s.maxDrawdown.toFixed(1) + '%' + (s.maxDrawdownMonth ? ' (' + s.maxDrawdownMonth + ')' : '')
+      : 'n/a');
+    if (d.rolling) {
+      var last = d.rolling[d.rolling.length - 1];
+      setText('rollingLatestVal', last.beta.toFixed(2) + ' (' + last.label + ')');
+    }
   }
 
   function fillMetrics(d) {
     var s = d.summary;
     var defs = [
       { id: 'mCagr', value: s.cagr, decimals: 1, suffix: '%' },
+      { id: 'mVol', value: s.volatility, decimals: 1, suffix: '%' },
       { id: 'mSharpe', value: s.sharpe, decimals: 2 },
       { id: 'mSortino', value: s.sortino, decimals: 2 },
-      { id: 'mInfo', value: s.information, decimals: 2 },
-      { id: 'mAlpha', value: s.alphaAnnual, decimals: 1, suffix: '%' },
+      { id: 'mMaxDD', value: s.maxDrawdown, decimals: 1, suffix: '%' },
       { id: 'mBeta', value: s.beta, decimals: 2 },
-      { id: 'mMaxDD', value: s.maxDrawdown, decimals: 1, suffix: '%' }
+      { id: 'mAlpha', value: s.alphaAnnual, decimals: 1, suffix: '%' },
+      { id: 'mInfo', value: s.information, decimals: 2 },
+      { id: 'mHit', value: s.hitRate, decimals: 0, suffix: '%' },
+      { id: 'mRsq', value: s.rsq, decimals: 2 }
     ];
     defs.forEach(function (m) {
       var el = document.getElementById(m.id);
-      if (el && isFinite(m.value)) mtCountUp(el, m.value, { decimals: m.decimals, suffix: m.suffix || '' });
+      if (!el) return;
+      if (isFinite(m.value)) mtCountUp(el, m.value, { decimals: m.decimals, suffix: m.suffix || '' });
+      else el.textContent = 'n/a';
     });
-    setText('mAlphaSub', fmtPct(s.alphaMonthly, 2) + ' per month, compounded to a year.');
-    setText('mMaxDDSub', 'Largest peak-to-trough decline of the month-end value (' + s.maxDrawdownMonth + ').');
-    setText('mMonths', String(s.months));
+
+    if (isFinite(s.months)) setText('mMonths', String(Math.round(s.months)));
+    if (isFinite(s.downsideDev)) setText('mVolSub', 'Downside deviation ' + s.downsideDev.toFixed(1) + '%, annualised.');
+    if (s.maxDrawdownMonth) setText('mMaxDDSub', 'Largest peak-to-trough decline of the month-end value (' + s.maxDrawdownMonth + ').');
+    if (isFinite(s.betaLow) && isFinite(s.betaHigh)) {
+      setText('mBetaSub', '95% confidence interval ' + s.betaLow.toFixed(2) + ' to ' + s.betaHigh.toFixed(2) + '.');
+    }
+    if (isFinite(s.alphaMonthly)) {
+      setText('mAlphaSub', fmtPct(s.alphaMonthly, 2) + ' per month, times 12.' +
+        (isFinite(s.alphaP) ? ' p-value ' + s.alphaP.toFixed(2) + '.' : ''));
+    }
+    if (isFinite(s.trackingError)) {
+      setText('mInfoSub', 'Tracking error ' + s.trackingError.toFixed(1) + '%.' +
+        (isFinite(s.informationP) ? ' p-value ' + s.informationP.toFixed(2) + '.' : ''));
+    }
+    if (isFinite(s.correlation)) setText('mRsqSub', 'Correlation with the S&P 500: ' + s.correlation.toFixed(2) + '.');
   }
 
-  function fillTable(d) {
+  function fillMonthlyTable(d) {
     var body = document.getElementById('monthlyTableBody');
     if (!body) return;
     var html = '';
     d.monthly.forEach(function (m) {
       var diff = m.port - m.spy;
-      html += '<tr><td>' + m.label + '</td>' +
+      html += '<tr><td>' + esc(m.label) + '</td>' +
         '<td class="' + (m.port >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.port) + '</td>' +
         '<td class="' + (m.spy >= 0 ? 'pos' : 'neg') + '">' + fmtPct(m.spy) + '</td>' +
         (isFinite(m.ndx)
@@ -218,9 +288,41 @@
     body.innerHTML = html;
   }
 
+  function fillMetricsTable(d) {
+    var body = document.getElementById('metricsTableBody');
+    show('metricsDetails', !!d.metrics);
+    if (!body || !d.metrics) return;
+    var html = '';
+    d.metrics.groups.forEach(function (g) {
+      html += '<tr class="group"><th colspan="5">' + esc(g.title) + '</th></tr>';
+      g.rows.forEach(function (r) {
+        html += '<tr><td>' + esc(r.label) + '</td>' +
+          '<td>' + esc(r.price || '') + '</td>' +
+          '<td>' + esc(r.total || '') + '</td>' +
+          '<td>' + esc(r.se || '') + '</td>' +
+          '<td class="conv">' + esc(r.convention || '') + '</td></tr>';
+      });
+    });
+    body.innerHTML = html;
+  }
+
+  function fillRollingTable(d) {
+    var body = document.getElementById('rollingTableBody');
+    show('rollingPanel', !!d.rolling);
+    show('rollingDetails', !!d.rolling);
+    if (!body || !d.rolling) return;
+    var html = '';
+    d.rolling.forEach(function (r) {
+      html += '<tr><td>' + esc(r.label) + '</td><td>' + esc(r.raw.beta) + '</td><td>' + esc(r.raw.rsq) + '</td>' +
+        '<td>' + esc(r.raw.alpha) + '</td><td>' + esc(r.raw.vol) + '</td><td>' + esc(r.raw.ret12) + '</td></tr>';
+    });
+    body.innerHTML = html;
+  }
+
   function fillUpdated(d) {
-    setText('updatedLabel', 'Updated through ' + d.updatedLabel + (d.live ? ' · live from source data' : ''));
+    setText('updatedLabel', 'Updated through ' + d.updatedLabel + (d.live ? ' · live from the source spreadsheet' : ' · offline copy'));
     document.querySelectorAll('[data-since]').forEach(function (n) { n.textContent = d.sinceLabel; });
+    document.querySelectorAll('[data-sheet-link]').forEach(function (a) { a.href = d.sheetUrl; });
   }
 
   MT.getData().then(function (d) {
@@ -234,7 +336,10 @@
     buildGrowthChart(d);
     buildMonthlyChart(d);
     buildDrawdownChart(d);
-    fillTable(d);
+    buildRollingChart(d);
+    fillMonthlyTable(d);
+    fillMetricsTable(d);
+    fillRollingTable(d);
   });
 
   document.addEventListener('mt:theme', function () {

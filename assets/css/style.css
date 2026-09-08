@@ -747,6 +747,26 @@ table.data-table td.pos { color: var(--up); }
 .methodology strong { color: var(--text); }
 table.data-table td.neg { color: var(--down); }
 
+table.data-table tr.group th {
+  text-align: left;
+  color: var(--text);
+  background: var(--card-2);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 14px 8px;
+}
+
+table.metrics-table td.conv {
+  text-align: left;
+  white-space: normal;
+  min-width: 280px;
+  font-size: 0.82rem;
+  color: var(--text-3);
+}
+
+table.metrics-table td:first-child { white-space: normal; min-width: 180px; }
+
 .sheet-wrap iframe {
   width: 100%;
   border: 1px solid var(--border);
